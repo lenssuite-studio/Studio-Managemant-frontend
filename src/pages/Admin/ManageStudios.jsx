@@ -119,12 +119,15 @@ export default function ManageStudios() {
                       style={{ fontSize: "13px", color: "#555" }}
                     >
                       {studio.lastLogin ? (
-                        new Date(studio.lastLogin).toLocaleString("en-US", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
+                        new Date(studio.lastLogin).toLocaleString("en-GB", {
+                          // 'en-GB' wuxuu soo saaraa Day/Month/Year (19/06/2026)
+                          timeZone: "Africa/Nairobi",
+                          hour12: true,
+                          dateStyle: "short", // Kani wuxuu ka dhigayaa qaabka gaaban ee ah 19/06/2026
+                          timeStyle: "short", // Kani wuxuu soo saarayaa saacadda iyo daqiiqada (e.g. 1:40 AM)
                         })
                       ) : (
-                        <span style={{ color: "#aaa", italic: "true" }}>
+                        <span style={{ color: "#aaa", fontStyle: "italic" }}>
                           Never logged in
                         </span>
                       )}
