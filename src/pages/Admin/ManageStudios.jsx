@@ -1,8 +1,12 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllStudios, toggleStudioStatus, deleteStudio } from "../../features/AdminSlice";
+import {
+  getAllStudios,
+  toggleStudioStatus,
+  deleteStudio,
+} from "../../features/AdminSlice";
 import "../../pages/Admin/AdminLayout.css";
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 
 export default function ManageStudios() {
   const dispatch = useDispatch();
@@ -14,7 +18,11 @@ export default function ManageStudios() {
 
   // 🔒 TOGGLE STATUS (Hadda waa async/await iyo try-catch)
   const handleToggle = async (id) => {
-    if (window.confirm("Ma hubtaa inaad rabto inaad bedesho status-ka Studio-gan?")) {
+    if (
+      window.confirm(
+        "Ma hubtaa inaad rabto inaad bedesho status-ka Studio-gan?",
+      )
+    ) {
       try {
         await dispatch(toggleStudioStatus(id)).unwrap();
         toast.success("Status-ka studio-ga si guul leh ayaa loo beddelay! ⚙️");
@@ -26,7 +34,11 @@ export default function ManageStudios() {
 
   // 🗑️ DELETE STUDIO (Hadda waa async/await iyo try-catch)
   const handleDelete = async (id) => {
-    if (window.confirm("DIGNIIN: Ma hubtaa inaad gabi ahaanba tirtirto Studio-gan?")) {
+    if (
+      window.confirm(
+        "DIGNIIN: Ma hubtaa inaad gabi ahaanba tirtirto Studio-gan?",
+      )
+    ) {
       try {
         await dispatch(deleteStudio(id)).unwrap();
         toast.success("Studio-ga gabi ahaanba waa nidaamka laga saaray! 🗑️");
@@ -37,15 +49,22 @@ export default function ManageStudios() {
   };
 
   if (loading) {
-    return <div className="table-empty-state">Waa la soo kicinayaa maamulka xarumaha...</div>;
+    return (
+      <div className="table-empty-state">
+        Waa la soo kicinayaa maamulka xarumaha...
+      </div>
+    );
   }
 
   return (
     <div className="admin-dashboard-container">
       <div className="admin-dashboard-header">
-        <h1 className="admin-dashboard-title">👑 Superadmin Studio Management</h1>
+        <h1 className="admin-dashboard-title">
+          👑 Superadmin Studio Management
+        </h1>
         <p className="admin-dashboard-subtitle">
-          Xannib, fasax ama gabi ahaanba nidaamka kaga tirtir photography studios-ka ka diiwaangashan LensSuite.
+          Xannib, fasax ama gabi ahaanba nidaamka kaga tirtir photography
+          studios-ka ka diiwaangashan LensSuite.
         </p>
       </div>
 
@@ -62,6 +81,7 @@ export default function ManageStudios() {
                 <th>Email Address</th>
                 <th>Status</th>
                 <th>Actions</th>
+                <th>lasteTime</th>
               </tr>
             </thead>
             <tbody>
@@ -69,27 +89,45 @@ export default function ManageStudios() {
                 studios.map((studio) => (
                   <tr key={studio._id}>
                     <td className="studio-name-cell">{studio.username}</td>
+
                     <td className="studio-email-cell">{studio.email}</td>
                     <td>
-                      <span className={`status-badge ${studio.isActive ? "status-active" : "status-inactive"}`}>
+                      <span
+                        className={`status-badge ${studio.isActive ? "status-active" : "status-inactive"}`}
+                      >
                         {studio.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
                     <td>
                       <div className="action-buttons-group">
-                        <button 
-                          onClick={() => handleToggle(studio._id)} 
+                        <button
+                          onClick={() => handleToggle(studio._id)}
                           className={`btn-action ${studio.isActive ? "btn-disable" : "btn-enable"}`}
                         >
                           {studio.isActive ? "🔒 Disable" : "🔓 Enable"}
                         </button>
-                        <button 
-                          onClick={() => handleDelete(studio._id)} 
+                        <button
+                          onClick={() => handleDelete(studio._id)}
                           className="btn-action btn-delete"
                         >
                           🗑️ Delete
                         </button>
                       </div>
+                    </td>
+                    <td
+                      className="studio-name-cell"
+                      style={{ fontSize: "13px", color: "#555" }}
+                    >
+                      {studio.lastLogin ? (
+                        new Date(studio.lastLogin).toLocaleString("en-US", {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })
+                      ) : (
+                        <span style={{ color: "#aaa", italic: "true" }}>
+                          Never logged in
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))
