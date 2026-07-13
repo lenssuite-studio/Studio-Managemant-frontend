@@ -44,11 +44,15 @@ function DiffView({ pendingChange }) {
 
 export default function Approvals() {
   const dispatch = useDispatch();
-  const { pendingChanges, loading } = useSelector((state) => state.Approvals);
+  const { pendingChanges, loading, error } = useSelector((state) => state.Approvals);
 
   useEffect(() => {
     dispatch(getPendingChanges());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (error) toast.error(error);
+  }, [error]);
 
   const handleApprove = async (pendingChange) => {
     if (!window.confirm(`Ma ansixinaysaa isbeddelkan (${actionLabels[pendingChange.actionType]})?`)) return;
@@ -82,7 +86,11 @@ export default function Approvals() {
       </p>
 
       <div className="table-container" style={{ marginTop: "24px" }}>
-        {!loading && pendingChanges.length === 0 ? (
+        {!loading && error ? (
+          <div className="loading-text" style={{ textAlign: "center", padding: "20px", color: "#dc2626" }}>
+            Wax qalad ah ayaa dhacay markii la soo qaadanayay isbeddellada sugaya: {error}
+          </div>
+        ) : !loading && pendingChanges.length === 0 ? (
           <div className="loading-text" style={{ textAlign: "center", padding: "20px" }}>
             Wax isbeddel sugaya lama helin. ✅
           </div>
