@@ -1,7 +1,8 @@
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import "../pages/Dashboard.css"; 
+import "../pages/Dashboard.css";
 import { logout } from "../features/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import useTheme from "../hooks/useTheme";
 import {
   FaChartBar,
   FaUsers,
@@ -14,12 +15,15 @@ import {
   FaCheckDouble,
   FaHistory,
   FaMoneyBillWave,
+  FaSun,
+  FaMoon,
 } from "react-icons/fa";
 
 export default function Layout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation(); // 🌟 Wuxuu eegayaa boga aad hadda taagan tahay
+  const { isDark, toggleTheme } = useTheme();
 
   const { userCustomer } = useSelector((state) => state.auth);
   // 🌟 PHASE 2: Reports iyo Team-ka waxaa arki kara Studio Manager oo kaliya, ma aha Employee
@@ -114,6 +118,16 @@ export default function Layout() {
 
         {/* FOOTER-KA SIDEBAR-KA: MAR KASTA HOOS AYUU KU DHAMANAYAA */}
         <div className="sidebar-footer">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            title="Beddel muuqaalka (Light/Dark)"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200 cursor-pointer"
+          >
+            <span className="text-lg flex">{isDark ? <FaSun /> : <FaMoon />}</span>
+            {isDark ? "Light Mode" : "Dark Mode"}
+          </button>
+
           <div className={getMenuItemClass("/Profile")} onClick={()=> navigate("/Profile")}>
             <span>
               <FaUserCircle />

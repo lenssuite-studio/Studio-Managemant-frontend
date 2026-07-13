@@ -1,53 +1,47 @@
 /* ==========================================
    🚀 LENSSUITE UNIFIED ADMIN LAYOUT & DASHBOARD
+   (color/spacing/motion tokens now come from the shared src/styles/theme.css
+   — --bg-main/--primary-color/etc. below were local duplicates of tokens
+   that already exist globally, so this file references those directly)
    ========================================== */
-
-:root {
-  --bg-main: #f8fafc;
-  --sidebar-bg: #563865;
-  --primary-color: #4f46e5;
-  --text-dark: #0f172a;
-  --text-muted: #64748b;
-  --border-light: #e2e8f0;
-  --transition-smooth: all 0.2s ease-in-out;
-}
 
 /* Layout Hooyo (Wrapper) */
 .lenssuite-layout2 {
   display: flex;
   min-height: 100vh;
-  background-color: var(--bg-main);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-page);
+  font-family: var(--font-sans);
 }
 
 /* 🟣 SIDEBAR STYLING */
 .lenssuite-sidebar2 {
   width: 240px; /* Wax yar baa loo weyneeyey si menu-yadu u neefsadaan */
-  background-color: var(--sidebar-bg);
+  background-color: var(--color-admin-sidebar);
   display: flex;
   flex-direction: column;
-  padding: 24px 20px;
+  padding: var(--space-6) var(--space-5);
   flex-shrink: 0; /* Waxay ka horstagaysaa in sidebar-ku isku dhufto */
+  transition: background-color var(--transition-base);
 }
 
 .sidebar-brand2 {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-10);
 }
 
 .brand-icon2 {
-  background-color: var(--primary-color);
+  background-color: var(--color-primary);
   color: white;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 18px;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-lg);
 }
 
 .sidebar-brand2 h3 {
   margin: 0;
-  font-size: 16px;
+  font-size: var(--text-base);
   color: white;
   font-weight: 600;
 }
@@ -61,25 +55,27 @@
 .sidebar-menu2 {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   flex-grow: 1;
 }
 
 .menu-item2 {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
   color: #f1f5f9;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: var(--transition-smooth);
-  font-size: 14px;
+  font-size: var(--text-base);
 }
 
 .menu-item2 span {
-  font-size: 18px;
+  font-size: var(--text-lg);
+  display: flex;
+  transition: transform var(--transition-fast);
 }
 
 /* Hover casri ah oo ka dhex dhashay dhumucda purple-ka */
@@ -88,17 +84,21 @@
   color: #ffffff;
 }
 
+.menu-item2:hover span {
+  transform: scale(1.08);
+}
+
 .menu-item2.active {
-  background-color: var(--primary-color);
+  background-color: var(--color-primary);
   color: #ffffff;
 }
 
 .sidebar-footer2 {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 16px;
+  padding-top: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 /* 🟢 MAIN CONTENT AREA (Halkan baa padding-kii lagu koobay) */
@@ -106,6 +106,7 @@
   flex-grow: 1;
   padding: 2.5rem;
   overflow-y: auto;
+  animation: lenssuite-fade-in-up 0.35s ease-out;
 }
 
 /* 📊 DASHBOARD CONTAINER (Waa laga saaray cidhiidhgii 900px) */
@@ -115,6 +116,14 @@
   margin: 0 auto;
 }
 
+/* 🖥️ Large-screen optimization: give ultra-wide monitors a bit more room
+   too, same philosophy as the studio-side Dashboard */
+@media screen and (min-width: 1900px) {
+  .admin-dashboard-container {
+    max-width: 1700px;
+  }
+}
+
 .admin-dashboard-header {
   margin-bottom: 2.5rem;
 }
@@ -122,7 +131,7 @@
 .admin-dashboard-title {
   font-size: 1.85rem;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.02em;
 }
@@ -132,7 +141,7 @@
   color: var(--text-muted);
   margin: 0;
   max-width: 750px;
-  line-height: 1.6;
+  line-height: var(--leading-relaxed);
 }
 
 /* 📊 METRICS GRID SYSTEM */
@@ -145,17 +154,17 @@
 
 /* METRIC CARDS */
 .admin-metric-card {
-  background-color: #ffffff;
-  border: 1px solid var(--border-light);
-  border-radius: 14px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth), background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .admin-metric-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.05);
+  box-shadow: var(--shadow-lg);
 }
 
 .card-top-row {
@@ -168,8 +177,8 @@
 .card-icon-wrapper {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
-  background-color: #f1f5f9;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -179,9 +188,9 @@
   font-size: 0.75rem;
   font-weight: 600;
   padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  background-color: #f1f5f9;
-  color: #475569;
+  border-radius: var(--radius-full);
+  background-color: var(--bg-subtle);
+  color: var(--text-muted-2);
 }
 
 .card-info {
@@ -199,17 +208,19 @@
 .card-number {
   font-size: 1.85rem;
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-primary);
   margin: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 📋 SHAXDA MAAMULKA (TABLE CONTAINER) */
 .admin-table-section {
-  background-color: #ffffff;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .table-header-container {
@@ -218,7 +229,7 @@
 
 .table-title {
   font-size: 1.15rem;
-  color: var(--text-dark);
+  color: var(--text-primary);
   font-weight: 600;
   margin: 0 0 0.25rem 0;
 }
@@ -241,7 +252,7 @@
 }
 
 .admin-studios-table thead tr {
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--bg-subtle);
   color: var(--text-muted);
   font-size: 0.875rem;
 }
@@ -252,14 +263,14 @@
 }
 
 .admin-studios-table tbody tr {
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--bg-subtle);
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--text-tertiary);
   transition: background-color 0.15s ease;
 }
 
 .admin-studios-table tbody tr:hover {
-  background-color: #f8fafc;
+  background-color: var(--bg-page);
 }
 
 .admin-studios-table td {
@@ -268,17 +279,17 @@
 
 .studio-name-cell {
   font-weight: 500;
-  color: var(--text-dark);
+  color: var(--text-primary);
 }
 
 .studio-email-cell {
-  color: #475569;
+  color: var(--text-muted-2);
 }
 
 /* STATUS BADGES */
 .status-badge {
   padding: 4px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.75rem;
   font-weight: 500;
   display: inline-block;
@@ -286,24 +297,34 @@
 }
 
 .status-badge.status-active {
-  background-color: #dcfce7;
-  color: #16a34a;
+  background-color: var(--color-success-bg);
+  color: var(--color-success-solid);
 }
 
 .status-badge.status-inactive {
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
 }
 
 /* EMPTY STATE */
 .table-empty-state {
   padding: 2.5rem 0;
   text-align: center;
-  color: #94a3b8;
+  color: var(--text-faint);
   font-style: italic;
 }
 
 /* 🖥️ RESPONSIVENESS (MOBILE FRIENDLY) */
+@media (max-width: 1024px) {
+  .lenssuite-main2 {
+    padding: 1.75rem;
+  }
+
+  .admin-metrics-grid {
+    gap: 0.85rem;
+  }
+}
+
 @media (max-width: 768px) {
   .lenssuite-layout2 {
     flex-direction: column;
@@ -316,20 +337,19 @@
   }
 }
 
-
 /* ==========================================
    ⚙️ ACTION BUTTONS STYLING FOR MANAGEMENT
    ========================================== */
 
 .action-buttons-group {
   display: flex;
-  gap: 8px;
+  gap: var(--space-2);
   align-items: center;
 }
 
 .btn-action {
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -339,7 +359,7 @@
 
 /* Button-ka Disable (Orange/Gray tint) */
 .btn-disable {
-  background-color: #fef3c7;
+  background-color: var(--color-warning-bg);
   color: #d97706;
 }
 .btn-disable:hover {
@@ -348,7 +368,7 @@
 
 /* Button-ka Enable (Buluug fudud) */
 .btn-enable {
-  background-color: #e0f2fe;
+  background-color: var(--color-info-bg);
   color: #0284c7;
 }
 .btn-enable:hover {
@@ -357,11 +377,9 @@
 
 /* Button-ka Delete (Casaan) */
 .btn-delete {
-  background-color: #fee2e2;
-  color: #dc2626;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
 }
 .btn-delete:hover {
   background-color: #fecaca;
 }
-
-

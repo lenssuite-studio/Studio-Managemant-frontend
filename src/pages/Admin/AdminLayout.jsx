@@ -2,6 +2,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/authSlice";
 import "../../pages/Admin/AdminLayout.css";
+import useTheme from "../../hooks/useTheme";
 import {
   FaChartBar,
   FaBuilding,
@@ -9,12 +10,15 @@ import {
   FaCamera,
   FaCog,
   FaSignOutAlt,
+  FaSun,
+  FaMoon,
 } from "react-icons/fa";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation(); // Kani wuxuu inoo sheegayaa bogga aan taagan nahay
+  const { isDark, toggleTheme } = useTheme();
 
   // Xogta superadmin-ka haddii aad rabto inaad magaciisa muujiso
   const { userCustomer } = useSelector((state) => state.auth);
@@ -66,6 +70,16 @@ export default function AdminLayout() {
         </nav>
 
         <div className="sidebar-footer2">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            title="Beddel muuqaalka (Light/Dark)"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm text-slate-200 hover:bg-white/10 hover:text-white transition-colors duration-200 cursor-pointer"
+          >
+            <span className="text-lg flex">{isDark ? <FaSun /> : <FaMoon />}</span>
+            {isDark ? "Light Mode" : "Dark Mode"}
+          </button>
+
           <div className="menu-item2">
             <span>❓</span> Support
           </div>

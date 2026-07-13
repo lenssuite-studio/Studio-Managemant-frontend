@@ -4,12 +4,15 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { LoginUser } from "../features/authSlice";
 import { useNavigate } from "react-router-dom";
+import useTheme from "../hooks/useTheme";
+import { FaSun, FaMoon } from "react-icons/fa";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { isDark, toggleTheme } = useTheme();
 
   const { token, loading, error } = useSelector((state) => state.auth);
 
@@ -26,6 +29,15 @@ export default function Login() {
 
   return (
     <div className="Container">
+      <button
+        type="button"
+        onClick={toggleTheme}
+        title="Beddel muuqaalka (Light/Dark)"
+        aria-label="Toggle dark mode"
+        className="fixed top-5 right-5 z-50 w-10 h-10 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 flex items-center justify-center transition-all duration-200 cursor-pointer"
+      >
+        {isDark ? <FaSun /> : <FaMoon />}
+      </button>
       <div className="Content-login">
         <div className="content-Right">
           <div className="right-conten">

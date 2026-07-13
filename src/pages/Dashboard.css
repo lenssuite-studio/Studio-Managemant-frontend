@@ -5,11 +5,8 @@
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background-color: #f8fafc;
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  background-color: var(--bg-page);
+  font-family: var(--font-sans);
 }
 
 /* 📌 SIDEBAR-KA: WALIGII WUU TAAGNAANAYAA, MA SCROLL-GARAOOMAYO */
@@ -18,23 +15,33 @@
   height: 100vh; /* Dhererka buuxa ee shaashadda */
   position: sticky; /* Wuxuu ku dhegganaanayaa meesha ugu sarreysa */
   top: 0;
-  background-color: #ffffff;
-  border-right: 1px solid #e2e8f0;
+  background-color: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: var(--space-6);
   flex-shrink: 0; /* 🔥 SAXID: Ka hortag inuu isku ururo shaashadaha waaweyn */
   box-sizing: border-box;
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 /* 🖥️ MIDIGTA (CONTENT-KA): ISAGA AYAA SCROLL SAMAYNAYA HADDII MACAAMIISHU BADATO */
 .lenssuite-main {
   flex-grow: 1;
-  padding: 30px 40px; /* Wax yar baa laga yareeyey padding-ka dhinacyada si boos loo helo */
-
+  padding: var(--space-8) var(--space-10);
   width: 100%;
-  max-width: 100%; /* 🔥 SAXID: Ka saar 1400px ama 900px, ka dhig 100% si uu monitor-ka u buuxiyo */
+  max-width: 100%;
   box-sizing: border-box;
+  animation: lenssuite-fade-in-up 0.35s ease-out;
+}
+
+/* 🖥️ LARGE-SCREEN OPTIMIZATION: content stays readable on ultra-wide monitors
+   instead of stretching table rows/cards edge-to-edge */
+@media screen and (min-width: 1900px) {
+  .lenssuite-main {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+  }
 }
 
 /* ==========================================
@@ -43,69 +50,78 @@
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
+  gap: var(--space-3);
+  margin-bottom: var(--space-10);
 }
 
 .brand-icon {
-  background-color: #4f46e5;
+  background-color: var(--color-primary);
   color: white;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 18px;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-lg);
 }
 
 .sidebar-brand h3 {
   margin: 0;
-  font-size: 16px;
-  color: #1e293b;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .sidebar-brand p {
   margin: 0;
-  font-size: 12px;
-  color: #64748b;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
 }
 
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   flex-grow: 1; /* Wuxuu hoos u riixayaa footer-ka guud */
 }
 
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  color: #64748b;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-muted);
   font-weight: 500;
-  border-radius: 8px;
+  font-size: var(--text-base);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: var(--transition-smooth);
 }
-.table-container .menu-item span {
-  font-size: 18px;
+
+.menu-item span {
+  font-size: var(--text-lg);
+  display: flex;
+  transition: transform var(--transition-fast);
 }
 
 .menu-item:hover {
-  background-color: #f1f5f9;
-  color: #1e293b;
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.menu-item:hover span {
+  transform: scale(1.08);
 }
 
 /* 🔥 KAN WUXUU SI TOOS AH U SHIDAYAA LINK-KA UU USER-KU GUUD QAADANAYO */
 .menu-item.active {
-  background-color: #4f46e5;
+  background-color: var(--color-primary);
   color: #ffffff;
 }
 
 .sidebar-footer {
-  border-top: 1px solid #e2e8f0;
-  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 /* Dashboard Row Elements */
@@ -113,84 +129,113 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-6);
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.form-title {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+}
+
+.form-subtitle {
+  color: var(--text-muted);
 }
 
 .btn-add-customer {
-  background-color: #4f46e5;
+  background-color: var(--color-primary);
   color: white;
-  padding: 12px 20px;
+  padding: var(--space-3) var(--space-5);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s;
+  font-size: var(--text-base);
+  transition: background-color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
 }
 
 .btn-add-customer:hover {
-  background-color: #3730a3;
+  background-color: var(--color-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-add-customer:active {
+  transform: translateY(0);
 }
 
 /* 📊 TABLE DESIGN: WUXUU SHUQLO BIYO-COOD AH KU LEEYAHAY SHAAHSADDA WEYN */
 .table-container {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   width: 100%; /* Wuxuu si buuxda u raacayaa ballaca main-ka */
   overflow-x: auto;
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .lenssuite-table {
   width: 100%;
-  
-  border: collapse;
+  border-collapse: collapse;
   text-align: left;
-  font-size: 14px;
+  font-size: var(--text-base);
   table-layout: auto;
-  
 }
 
 .lenssuite-table th {
-  background-color: #ecf0f4;
-  padding: 30px;
-  color: #475569;
+  background-color: var(--bg-subtle-strong);
+  padding: var(--space-4) var(--space-3);
+  color: var(--text-muted-2);
   font-weight: 600;
-  border-bottom: 1px solid #e2e8f0;
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .lenssuite-table td {
-  padding: 10px;
-  border-bottom: 1px solid #f1f5f9;
-  color: #334155;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--bg-subtle);
+  color: var(--text-tertiary);
+}
+
+.lenssuite-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.lenssuite-table tbody tr:hover {
+  background-color: var(--bg-subtle);
 }
 
 .td-name {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .folder-badge {
-  background-color: #f1f5f9;
-  color: #475569;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-family: monospace;
-  font-size: 12px;
+  background-color: var(--bg-subtle);
+  color: var(--text-muted-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
 }
 
 .status-pill {
   padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
   font-weight: 600;
   display: inline-block;
+  transition: transform var(--transition-fast);
 }
 
 .td-paid {
   font-weight: 500;
-  color: #0f172a;
+  color: var(--text-primary);
 }
 
 .td-remaining {
@@ -206,58 +251,71 @@
 
 .search-icon {
   position: absolute;
-  left: 14px;
+  left: var(--space-4);
   top: 50%;
   transform: translateY(-50%);
-  color: #94a3b8;
-  font-size: 14px;
+  color: var(--text-faint);
+  font-size: var(--text-base);
 }
 
 .search-input {
   width: 100%;
-  padding: 12px 12px 12px 40px;
-  border: 1px solid #e2e8f0;
-  border-radius: 9999px;
-  background-color: #ffffff;
-  font-size: 14px;
-  color: #334155;
+  padding: var(--space-3) var(--space-3) var(--space-3) 40px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background-color: var(--bg-surface);
+  color: var(--text-tertiary);
+  font-size: var(--text-base);
   outline: none;
-  transition: all 0.2s;
+  transition: var(--transition-smooth);
 }
 
 .search-input:focus {
-  border-color: #4f46e5;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
 }
 
 /* Foomamka Add Customer Profiles */
 .form-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .form-grid {
   display: flex;
-  gap: 20px;
+  gap: var(--space-5);
+  flex-wrap: wrap;
 }
 
 .input-group {
   flex: 1;
+  min-width: 200px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-2);
 }
 
 .input-group input,
 .form-select {
-  padding: 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: var(--space-3);
+  border: 1px solid var(--border-color-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  outline: none;
+  transition: var(--transition-smooth);
 }
 
+.input-group input:focus,
+.form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
 
 /* 🛠️ SUPPORT & HELP DROPDOWN STYLES */
 .support-wrapper {
@@ -267,15 +325,15 @@
 }
 
 .support-dropdown {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 4px;
-  font-size: 12px;
-  color: #475569;
-  line-height: 1.5;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-page);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-muted-2);
+  line-height: var(--leading-relaxed);
+  box-shadow: var(--shadow-sm);
 }
 
 .support-dropdown p {
@@ -288,31 +346,28 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background-color: #25d366; /* Midabka rasmiga ah ee WhatsApp */
+  background-color: var(--color-whatsapp);
   color: white !important;
   text-decoration: none;
-  padding: 8px 12px;
-  border-radius: 6px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
   font-weight: 600;
   text-align: center;
-  transition: background 0.2s, transform 0.2s;
+  transition: background-color var(--transition-base), transform var(--transition-fast);
 }
 
 .whatsapp-btn:hover {
-  background-color: #1ebd58;
+  background-color: var(--color-whatsapp-hover);
   transform: translateY(-1px);
 }
 
 /* Logout styling si uu u yara fogaado */
 .logout-item {
-  color: #ef4444 !important; /* Midab gaduud ah si uu uga gartid waxyaabaha kale */
+  color: var(--color-danger-text) !important; /* Midab gaduud ah si uu uga gartid waxyaabaha kale */
 }
 .logout-item:hover {
-  background-color: #fef2f2 !important;
+  background-color: var(--color-danger-bg) !important;
 }
-
-
-
 
 /* ==========================================================================
    📱 RESPONSIVE DESIGN FOR LAPTOPS & SMALLER SCREENS (QAYBTA 1AAD)
@@ -320,24 +375,23 @@
 
 /* Marka shaashadu ka yar tahay 1200px (Sida Laptop-yada caadiga ah) */
 @media screen and (max-width: 1200px) {
-  
   /* 🖥️ La qabsiga Content-ka midig */
   .lenssuite-main {
-    padding: 20px; /* Wax yar baa laga yareeyey padding-ka si boos loo helo */
+    padding: var(--space-5); /* Wax yar baa laga yareeyey padding-ka si boos loo helo */
   }
 
   /* 📊 Madaxa Dashboard-ka oo isku dhex dhalanaya haddii boosku yaraado */
   .dashboard-header-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: var(--space-4);
   }
 
   /* Search-ga iyo badhanka oo boos buuxa qaadanaya marka la isku soo dhaco */
   .search-wrapper {
     max-width: 100%;
     width: 100%;
-    margin-top: 10px;
+    margin-top: var(--space-2);
   }
 
   .btn-add-customer {
@@ -350,17 +404,17 @@
     width: 100%;
     overflow-x: auto; /* Wuxuu keenayaa scroll hoose oo miiska gudihiisa ah halkii uu shaashada dhiqi lahaa */
     -webkit-overflow-scrolling: touch;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
   }
 
   .lenssuite-table {
     table-layout: auto; /* Wuxuu u oggolaanayaa tiirarku inay u fidaan dhererkooda saxda ah */
-    min-width: 950px;   /* Wuxuu qasbayaa in miisku uusan ka yaraan 950px si xogtu u neefsato */
+    min-width: 950px; /* Wuxuu qasbayaa in miisku uusan ka yaraan 950px si xogtu u neefsato */
   }
 
-  .lenssuite-table th, 
+  .lenssuite-table th,
   .lenssuite-table td {
-    padding: 12px 8px; /* Wax yar baa padding-ka laga yareeyey */
+    padding: 10px 8px; /* Wax yar baa padding-ka laga yareeyey */
     white-space: nowrap; /* Wuxuu ka hortagayaa in qoraaladu isku dhex murgancan */
   }
 }
@@ -375,32 +429,35 @@
     width: 100%;
     height: auto;
     position: relative;
-    padding: 16px;
+    padding: var(--space-4);
     border-right: none;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid var(--border-color);
   }
 
   .sidebar-brand {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
   }
 
   .sidebar-menu {
     flex-direction: row; /* Menu-ha sidebar-ka wuxuu isu beddelayaa dhinac-dhinac (Row) */
     overflow-x: auto;
-    padding-bottom: 10px;
+    padding-bottom: var(--space-2);
   }
 
   .menu-item {
-    padding: 8px 12px;
+    padding: var(--space-2) var(--space-3);
     white-space: nowrap;
   }
 
   .sidebar-footer {
-    margin-top: 10px;
-    padding-top: 10px;
+    margin-top: var(--space-2);
+    padding-top: var(--space-2);
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
   }
+
+  .theme-toggle-btn {
+    width: auto;
+  }
 }
-
-

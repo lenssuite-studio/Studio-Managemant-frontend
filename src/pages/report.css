@@ -1,93 +1,132 @@
 /* Reports Main Layout */
 .reports-container {
-  padding: 20px;
+  padding: var(--space-5);
 }
 
 /* Grid-ka Kaararka */
 .reports-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
-  margin-top: 24px;
+  gap: var(--space-6);
+  margin-top: var(--space-6);
 }
 
 /* Qaabka guud ee Kaarka (Report Card) */
 .report-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 24px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
   display: flex;
   align-items: center;
-  gap: 20px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .report-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Icon-ka dhex fadhiya kaarka */
 .card-icon {
-  font-size: 28px;
+  font-size: var(--text-xl);
   width: 56px;
   height: 56px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 /* Midabaynta gaarka ah ee kaararka maaliyadda */
 .report-card.income .card-icon {
-  background-color: #e6f4ea;
+  background-color: var(--color-success-bg);
 }
 .report-card.debt .card-icon {
-  background-color: #fce8e6;
+  background-color: var(--color-danger-bg);
 }
 .report-card.users .card-icon {
-  background-color: #e8f0fe;
+  background-color: var(--color-info-bg);
 }
 .report-card.gallery .card-icon {
-  background-color: #fef7e0;
+  background-color: var(--color-warning-bg);
 }
 
 /* Macluumaadka Qoraalka ee Kaarka */
 .card-info {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .card-label {
-  font-size: 13px;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .card-value {
-  font-size: 24px;
+  font-size: var(--text-2xl);
   font-weight: 700;
-  color: #1e293b;
-  margin: 4px 0 0 0;
+  color: var(--text-secondary);
+  margin: var(--space-1) 0 0 0;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Segment Row Layout */
 .segment-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .segment-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
-  background-color: #f8fafc;
-  border-radius: 8px;
-  border: 1px solid #f1f5f9;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--bg-page);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--bg-subtle);
+  transition: background-color var(--transition-base);
+}
+
+/* ========================================================================
+   📱 RESPONSIVE (was previously missing entirely on this page)
+   ======================================================================== */
+@media screen and (max-width: 640px) {
+  .reports-container {
+    padding: var(--space-3);
+  }
+
+  .reports-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3);
+  }
+
+  .report-card {
+    padding: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    font-size: var(--text-lg);
+  }
+
+  .card-value {
+    font-size: var(--text-xl);
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .reports-stats-grid {
+    grid-template-columns: 1fr;
+  }
 }
