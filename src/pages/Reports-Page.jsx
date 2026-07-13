@@ -1,429 +1,237 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCustomer } from "../features/CustomerSlice";
+import { getReport } from "../features/ReportsSlice";
+import { getPeriodRange, PERIOD_LABELS } from "../utils/reportPeriods";
+import toast from "react-hot-toast";
 import "./Dashboard.css";
 import "./report.css";
 
+const roleLabel = (role) => {
+  if (role === "studio_manager" || role === "studio_admin") return "Studio Manager";
+  if (role === "employee") return "Employee";
+  return role || "—";
+};
+
 export default function Reports() {
   const dispatch = useDispatch();
-  const { customers, loading } = useSelector((state) => state.Customer);
+  const { data: report, loading } = useSelector((state) => state.Reports);
 
+  const [period, setPeriod] = useState("monthly");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+
+  const runReport = (from, to) => {
+    dispatch(getReport({ from: from.toISOString(), to: to.toISOString() }));
+  };
+
+  // 🔥 Marka period-ku isbedelo (Daily/Weekly/Monthly/Yearly), toos u soo qaad xogta cusub
   useEffect(() => {
-    if (!customers || customers.length === 0) {
-      dispatch(getCustomer());
+    if (period === "custom") return; // Custom wuxuu sugayaa "Apply" badhanka
+    const range = getPeriodRange(period);
+    if (range) runReport(range.from, range.to);
+  }, [period]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleApplyCustom = () => {
+    if (!customFrom || !customTo) {
+      toast.error("Fadlan dooro labada taariikhood (From iyo To).");
+      return;
     }
-  }, [dispatch, customers]);
+    const from = new Date(`${customFrom}T00:00:00`);
+    const to = new Date(`${customTo}T23:59:59.999`);
+    if (from > to) {
+      toast.error("Taariikhda 'From' waa in ay ka horreysaa 'To'.");
+      return;
+    }
+    runReport(from, to);
+  };
 
-  // 🔥 MISHIINKA XISAABINTA WARBIXINNADA (METRICS)
-  const totalCustomers = customers?.length || 0;
-  const totalIncome =
-    customers?.reduce((acc, curr) => acc + (Number(curr.amountPaid) || 0), 0) ||
-    0;
-  const totalDebt =
-    customers?.reduce(
-      (acc, curr) => acc + (Number(curr.remainingAmount) || 0),
-      0,
-    ) || 0;
-  const totalPhotos =
-    customers?.reduce(
-      (acc, curr) => acc + (Number(curr.numberOfPhotos) || 0),
-      0,
-    ) || 0;
+  // 🌟 Dynamic import: jspdf/xlsx (~1MB combined) suulo la geliyo kaliya marka
+  // Manager-ku dhab ahaan riixo Export, halkii ay ku jiri lahaayeen bundle guud ee app-ka
+  const handleExportPDF = async () => {
+    if (!report) return;
+    const { exportReportToPDF } = await import("../utils/reportExport");
+    exportReportToPDF(report, PERIOD_LABELS[period]);
+  };
 
-  // 1. Segmentation Counts
-  const vipCount =
-    customers?.filter((c) => c.customerType === "VIP").length || 0;
-  const normalCount =
-    customers?.filter((c) => c.customerType === "NORMAL").length || 0;
+  const handleExportExcel = async () => {
+    if (!report) return;
+    const { exportReportToExcel } = await import("../utils/reportExport");
+    exportReportToExcel(report, PERIOD_LABELS[period]);
+  };
 
-  // 2. Status Counts
-  const pendingCount =
-    customers?.filter((c) => c.status === "Pending").length || 0;
-  const deliveredCount =
-    customers?.filter((c) => c.status === "Delivered").length || 0;
-  const completedCount =
-    customers?.filter((c) => c.status === "Completed").length || 0;
-
-  // 3. PhotoType Counts (Aad ayay ugu qurux badan tahay Report-ka studio-ga!)
-  const weddingCount =
-    customers?.filter((c) => c.PhotoType === "Wedding").length || 0;
-  const portraitCount =
-    customers?.filter((c) => c.PhotoType === "Portrait").length || 0;
-  const headshotCount =
-    customers?.filter((c) => c.PhotoType === "Headshot").length || 0;
-  const idCardCount =
-    customers?.filter((c) => c.PhotoType === "ID_Card").length || 0;
-  const othersCount =
-    totalCustomers -
-    (weddingCount + portraitCount + headshotCount + idCardCount);
-
-  if (loading) {
-    return (
-      <div
-        className="loading-wrapper"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "50vh",
-        }}
-      >
-        <div
-          className="loading-text"
-          style={{ fontSize: "16px", color: "#64748b" }}
-        >
-          🔄 Xogta warbixinta LensSuite ayaa la soo kicinayaa...
-        </div>
-      </div>
-    );
-  }
+  const topService = report?.serviceBreakdown?.[0] || null;
 
   return (
     <div className="lenssuite-main reports-container">
       {/* HEADER */}
-      <div className="dashboard-header-row" style={{ marginBottom: "24px" }}>
+      <div className="dashboard-header-row" style={{ marginBottom: "20px" }}>
         <div>
-          <h1
-            className="form-title"
-            style={{ display: "flex", alignItems: "center", gap: "10px" }}
-          >
+          <h1 className="form-title" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <span>📊</span> Studio Analytics & Reports
           </h1>
           <p className="form-subtitle">
-            Halkan ka la soco dakhliga guud, deynta dibadda jirta, iyo pasg-yada
-            macaamiisha studio-gaaga.
+            Halkan ka la soco dakhliga, sawirrada, waxqabadka shaqaalaha, iyo adeegyada ugu badan ee la codsado.
           </p>
         </div>
       </div>
 
-      {/* STATS GRID (Kaararka Xogta) */}
-      <div className="reports-stats-grid">
-        <div className="report-card income">
-          <div
-            className="card-icon"
-            style={{ background: "#e6f4ea", color: "#137333" }}
-          >
-            💰
-          </div>
-          <div className="card-info">
-            <span className="card-label">Total Income</span>
-            <h2 className="card-value">{totalIncome.toLocaleString()}</h2>
-          </div>
-        </div>
-
-        <div className="report-card debt">
-          <div
-            className="card-icon"
-            style={{ background: "#fef7e0", color: "#b06000" }}
-          >
-            💸
-          </div>
-          <div className="card-info">
-            <span className="card-label">Total Debt (Deynta)</span>
-            <h2
-              className="card-value"
-              style={{ color: totalDebt > 0 ? "#dc2626" : "#475569" }}
-            >
-              {totalDebt.toLocaleString()}
-            </h2>
-          </div>
-        </div>
-
-        <div className="report-card users">
-          <div
-            className="card-icon"
-            style={{ background: "#e8f0fe", color: "#1a73e8" }}
-          >
-            👥
-          </div>
-          <div className="card-info">
-            <span className="card-label">Total Customers</span>
-            <h2 className="card-value">{totalCustomers}</h2>
-          </div>
-        </div>
-
-        <div className="report-card gallery">
-          <div
-            className="card-icon"
-            style={{ background: "#f3e8ff", color: "#7e22ce" }}
-          >
-            📸
-          </div>
-          <div className="card-info">
-            <span className="card-label">Photos Captured</span>
-            <h2 className="card-value">{totalPhotos}</h2>
-          </div>
-        </div>
-      </div>
-
-      {/* BREAKDOWN SECTION - Loo kala qaybiyey sadex tiir oo nifamsan */}
+      {/* PERIOD SELECTOR */}
       <div
-        className="reports-breakdown-grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "24px",
-          marginTop: "32px",
-        }}
+        className="form-card"
+        style={{ padding: "16px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px" }}
       >
-        {/* CARD 1: CUSTOMER TYPES */}
-        <div
-          className="form-card"
-          style={{
-            padding: "20px",
-            background: "#ffffff",
-            borderRadius: "12px",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3
-            style={{
-              marginBottom: "20px",
-              color: "#1e293b",
-              fontSize: "16px",
-              borderBottom: "1px solid #f1f5f9",
-              paddingBottom: "10px",
-            }}
+        {Object.keys(PERIOD_LABELS).map((key) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setPeriod(key)}
+            className={period === key ? "btn-submit" : "btn-cancel"}
+            style={{ padding: "8px 16px" }}
           >
-            👤 Client Segments
-          </h3>
-          <div
-            className="segment-list"
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
-            <div
-              className="segment-item"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span
-                className="status-pill"
-                style={{
-                  backgroundColor: "#e6f4ea",
-                  color: "#137333",
-                  fontWeight: "500",
-                }}
-              >
-                ⭐ VIP Tier
-              </span>
-              <strong style={{ fontSize: "16px", color: "#1e293b" }}>
-                {vipCount} clients
-              </strong>
-            </div>
-            <div
-              className="segment-item"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span
-                className="status-pill"
-                style={{
-                  backgroundColor: "#e8f0fe",
-                  color: "#1a73e8",
-                  fontWeight: "500",
-                }}
-              >
-                🔵 Normal Tier
-              </span>
-              <strong style={{ fontSize: "16px", color: "#1e293b" }}>
-                {normalCount} clients
-              </strong>
-            </div>
-          </div>
-        </div>
+            {PERIOD_LABELS[key]}
+          </button>
+        ))}
 
-        {/* CARD 2: ORDER STATUS */}
-        <div
-          className="form-card"
-          style={{
-            padding: "20px",
-            background: "#ffffff",
-            borderRadius: "12px",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3
-            style={{
-              marginBottom: "20px",
-              color: "#1e293b",
-              fontSize: "16px",
-              borderBottom: "1px solid #f1f5f9",
-              paddingBottom: "10px",
-            }}
-          >
-            📦 Order Status Overview
-          </h3>
-          <div
-            className="segment-list"
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
-            <div
-              className="segment-item"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span
-                className="status-pill"
-                style={{
-                  backgroundColor: "#fef7e0",
-                  color: "#b06000",
-                  fontWeight: "500",
-                }}
-              >
-                ⏳ Pending Orders
-              </span>
-              <strong style={{ fontSize: "16px", color: "#1e293b" }}>
-                {pendingCount}
-              </strong>
-            </div>
-            <div
-              className="segment-item"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span
-                className="status-pill"
-                style={{
-                  backgroundColor: "#e8f0fe",
-                  color: "#1a73e8",
-                  fontWeight: "500",
-                }}
-              >
-                🚚 Delivered
-              </span>
-              <strong style={{ fontSize: "16px", color: "#1e293b" }}>
-                {deliveredCount}
-              </strong>
-            </div>
-            <div
-              className="segment-item"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <span
-                className="status-pill"
-                style={{
-                  backgroundColor: "#e6f4ea",
-                  color: "#137333",
-                  fontWeight: "500",
-                }}
-              >
-                ✅ Completed
-              </span>
-              <strong style={{ fontSize: "16px", color: "#137333" }}>
-                {completedCount}
-              </strong>
-            </div>
+        {period === "custom" && (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "8px" }}>
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => setCustomFrom(e.target.value)}
+              className="form-input"
+            />
+            <span>—</span>
+            <input
+              type="date"
+              value={customTo}
+              onChange={(e) => setCustomTo(e.target.value)}
+              className="form-input"
+            />
+            <button type="button" className="btn-submit" onClick={handleApplyCustom}>
+              Apply
+            </button>
           </div>
-        </div>
+        )}
 
-        {/* CARD 3: PHOTO TYPE BREAKDOWN */}
-        <div
-          className="form-card"
-          style={{
-            padding: "20px",
-            background: "#ffffff",
-            borderRadius: "12px",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3
-            style={{
-              marginBottom: "20px",
-              color: "#1e293b",
-              fontSize: "16px",
-              borderBottom: "1px solid #f1f5f9",
-              paddingBottom: "10px",
-            }}
-          >
-            🖼️ Popular Photo Types
-          </h3>
-          <div
-            className="segment-list"
-            style={{ display: "flex", flexDirection: "column", gap: "10px" }}
-          >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "14px",
-              }}
-            >
-              <span style={{ color: "#64748b" }}>👰 Wedding Sessions:</span>
-              <span style={{ fontWeight: "600", color: "#1e293b" }}>
-                {weddingCount}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "14px",
-              }}
-            >
-              <span style={{ color: "#64748b" }}>📸 Portrait:</span>
-              <span style={{ fontWeight: "600", color: "#1e293b" }}>
-                {portraitCount}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "14px",
-              }}
-            >
-              <span style={{ color: "#64748b" }}>👤 Headshot:</span>
-              <span style={{ fontWeight: "600", color: "#1e293b" }}>
-                {headshotCount}
-              </span>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: "14px",
-              }}
-            >
-              <span style={{ color: "#64748b" }}>🪪 ID Cards:</span>
-              <span style={{ fontWeight: "600", color: "#1e293b" }}>
-                {idCardCount}
-              </span>
-            </div>
-            {othersCount > 0 && (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: "14px",
-                  borderTop: "1px dashed #f1f5f9",
-                  paddingTop: "6px",
-                }}
-              >
-                <span style={{ color: "#aaadb3" }}>Others:</span>
-                <span style={{ fontWeight: "600", color: "#aaadb3" }}>
-                  {othersCount}
-                </span>
-              </div>
-            )}
-          </div>
+        <div style={{ marginLeft: "auto", display: "flex", gap: "8px" }}>
+          <button type="button" className="btn-cancel" onClick={handleExportPDF} disabled={!report || loading}>
+            📄 Export PDF
+          </button>
+          <button type="button" className="btn-cancel" onClick={handleExportExcel} disabled={!report || loading}>
+            📊 Export Excel
+          </button>
         </div>
       </div>
+
+      {loading && (
+        <div className="loading-wrapper" style={{ display: "flex", justifyContent: "center", padding: "40px" }}>
+          <div className="loading-text" style={{ fontSize: "16px", color: "#64748b" }}>
+            🔄 Xogta warbixinta ayaa la soo kicinayaa...
+          </div>
+        </div>
+      )}
+
+      {!loading && report && (
+        <>
+          {/* STATS GRID */}
+          <div className="reports-stats-grid" style={{ marginTop: "24px" }}>
+            <div className="report-card income">
+              <div className="card-icon" style={{ background: "#e6f4ea", color: "#137333" }}>💰</div>
+              <div className="card-info">
+                <span className="card-label">Revenue (Paid)</span>
+                <h2 className="card-value">${report.revenue.totalPaid.toLocaleString()}</h2>
+              </div>
+            </div>
+
+            <div className="report-card debt">
+              <div className="card-icon" style={{ background: "#fef7e0", color: "#b06000" }}>💸</div>
+              <div className="card-info">
+                <span className="card-label">Outstanding (Debt)</span>
+                <h2 className="card-value" style={{ color: report.revenue.totalOutstanding > 0 ? "#dc2626" : "#475569" }}>
+                  ${report.revenue.totalOutstanding.toLocaleString()}
+                </h2>
+              </div>
+            </div>
+
+            <div className="report-card users">
+              <div className="card-icon" style={{ background: "#e8f0fe", color: "#1a73e8" }}>🧾</div>
+              <div className="card-info">
+                <span className="card-label">Total Orders</span>
+                <h2 className="card-value">{report.revenue.orderCount}</h2>
+              </div>
+            </div>
+
+            <div className="report-card gallery">
+              <div className="card-icon" style={{ background: "#f3e8ff", color: "#7e22ce" }}>📸</div>
+              <div className="card-info">
+                <span className="card-label">Photo Count</span>
+                <h2 className="card-value">{report.photoCount}</h2>
+              </div>
+            </div>
+          </div>
+
+          {topService && (
+            <div className="form-card" style={{ marginTop: "24px", padding: "16px 20px" }}>
+              <span style={{ fontSize: "13px", color: "#64748b" }}>⭐ Most Requested Service</span>
+              <h3 style={{ margin: "4px 0 0", color: "#1e293b" }}>
+                {topService.photoType} — {topService.count} order{topService.count === 1 ? "" : "s"}
+              </h3>
+            </div>
+          )}
+
+          {/* EMPLOYEE PERFORMANCE */}
+          <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
+            <h3 style={{ marginBottom: "16px", color: "#1e293b", fontSize: "16px" }}>👥 Employee Performance</h3>
+            <div className="table-container">
+              {report.employeePerformance.length === 0 ? (
+                <div className="loading-text" style={{ textAlign: "center", padding: "16px" }}>
+                  Wax xog ah lama helin muddadan.
+                </div>
+              ) : (
+                <table className="lenssuite-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Role</th>
+                      <th>Orders</th>
+                      <th>Revenue</th>
+                      <th>Photos</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {report.employeePerformance.map((e) => (
+                      <tr key={e.userId}>
+                        <td className="td-name">{e.username}</td>
+                        <td>{roleLabel(e.role)}</td>
+                        <td>{e.orderCount}</td>
+                        <td className="td-paid">${e.revenue.toLocaleString()}</td>
+                        <td>{e.photoCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
+          {/* SERVICE BREAKDOWN */}
+          <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
+            <h3 style={{ marginBottom: "16px", color: "#1e293b", fontSize: "16px" }}>🖼️ Service Breakdown</h3>
+            <div className="segment-list" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {report.serviceBreakdown.length === 0 ? (
+                <span style={{ color: "#64748b", fontSize: "14px" }}>Wax xog ah lama helin muddadan.</span>
+              ) : (
+                report.serviceBreakdown.map((s) => (
+                  <div key={s.photoType} style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                    <span style={{ color: "#64748b" }}>{s.photoType}</span>
+                    <span style={{ fontWeight: "600", color: "#1e293b" }}>{s.count}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

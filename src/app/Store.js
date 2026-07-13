@@ -8,6 +8,7 @@ import EmployeeReducer from "../features/EmployeeSlice"
 import ProfileReducer from "../features/ProfileSlice"
 import ApprovalsReducer from "../features/ApprovalsSlice"
 import ActivityHistoryReducer from "../features/ActivityHistorySlice"
+import ReportsReducer from "../features/ReportsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -19,5 +20,6 @@ export const store = configureStore({
     Profile: ProfileReducer,
     Approvals: ApprovalsReducer,
     ActivityHistory: ActivityHistoryReducer,
+    Reports: ReportsReducer,
   },
 });
