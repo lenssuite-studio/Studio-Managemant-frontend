@@ -10,6 +10,7 @@ import {
   FaLifeRing,
   FaSignOutAlt,
   FaUserFriends,
+  FaUserCircle,
 } from "react-icons/fa";
 
 export default function Layout() {
@@ -83,6 +84,12 @@ export default function Layout() {
 
         {/* FOOTER-KA SIDEBAR-KA: MAR KASTA HOOS AYUU KU DHAMANAYAA */}
         <div className="sidebar-footer">
+          <div className={getMenuItemClass("/Profile")} onClick={()=> navigate("/Profile")}>
+            <span>
+              <FaUserCircle />
+            </span>{" "}
+            Profile
+          </div>
           <div className="menu-item" onClick={()=> navigate("/Support")}>
             <span>
               <FaLifeRing />

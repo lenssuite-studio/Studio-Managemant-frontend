@@ -5,6 +5,7 @@ import CustomerReducer from "../features/CustomerSlice";
 import adminReducer  from "../features/AdminSlice"
 import passwordReducer from "../features/passwordSlice"
 import EmployeeReducer from "../features/EmployeeSlice"
+import ProfileReducer from "../features/ProfileSlice"
 
 export const store = configureStore({
   reducer: {
@@ -13,5 +14,6 @@ export const store = configureStore({
     admin: adminReducer,
     password:passwordReducer,
     Employee: EmployeeReducer,
+    Profile: ProfileReducer,
   },
 });

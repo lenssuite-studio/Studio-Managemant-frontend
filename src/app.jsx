@@ -9,6 +9,7 @@ import Layout from "./pages/Layout";
 import EditCustomer from "./pages/EditCustomer";
 import Reports from "./pages/Reports-Page";
 import Employees from "./pages/Employees";
+import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import ManageStudios from "./pages/Admin/ManageStudios";
@@ -86,6 +87,7 @@ export default function App() {
             <Route path="/EditCustomer/:id" element={<EditCustomer />} />
             <Route path="/Support" element={<Support/>}/>
             <Route path="/Archive" element={<Archive/>} />
+            <Route path="/Profile" element={<Profile/>} />
           </Route>
         </Route>
 

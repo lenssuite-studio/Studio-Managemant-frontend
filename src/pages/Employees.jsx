@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getEmployees, createEmployee } from "../features/EmployeeSlice";
+import {
+  getEmployees,
+  createEmployee,
+  editEmployee,
+  toggleEmployeeStatus,
+  deleteEmployee,
+} from "../features/EmployeeSlice";
 import toast from "react-hot-toast";
 import "./AddCustomer.css";
 import "./Dashboard.css";
+
+const emptyForm = { username: "", email: "", password: "" };
 
 export default function Employees() {
   const dispatch = useDispatch();
   const { employees, loading } = useSelector((state) => state.Employee);
 
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState(emptyForm);
+  const [editingId, setEditingId] = useState(null); // 🌟 Haddii uu jiro, foomka wuxuu ku jiraa Edit mode
 
   useEffect(() => {
     dispatch(getEmployees());
@@ -24,14 +29,57 @@ export default function Employees() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const startEdit = (employee) => {
+    setEditingId(employee._id);
+    setFormData({ username: employee.username, email: employee.email, password: "" });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData(emptyForm);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await dispatch(createEmployee(formData)).unwrap();
-      toast.success("Shaqaale cusub ayaa si guul leh loo daray! ➕");
-      setFormData({ username: "", email: "", password: "" });
+      if (editingId) {
+        await dispatch(
+          editEmployee({
+            id: editingId,
+            employeeData: { username: formData.username, email: formData.email },
+          }),
+        ).unwrap();
+        toast.success("Shaqaalaha si guul leh ayaa wax looga beddelay! ✏️");
+        cancelEdit();
+      } else {
+        await dispatch(createEmployee(formData)).unwrap();
+        toast.success("Shaqaale cusub ayaa si guul leh loo daray! ➕");
+        setFormData(emptyForm);
+      }
     } catch (err) {
-      toast.error(err || "Cillad ayaa dhacday inta shaqaalaha la darayay.");
+      toast.error(err || "Cillad ayaa dhacday.");
+    }
+  };
+
+  const handleToggle = async (employee) => {
+    const verb = employee.isActive ? "disable" : "enable";
+    if (!window.confirm(`Ma hubtaa inaad ${verb} garayso ${employee.username}?`)) return;
+    try {
+      await dispatch(toggleEmployeeStatus(employee._id)).unwrap();
+      toast.success("Xaaladda shaqaalaha waa la beddelay! ⚙️");
+    } catch (err) {
+      toast.error(err || "Cillad ayaa dhacday.");
+    }
+  };
+
+  const handleDelete = async (employee) => {
+    if (!window.confirm(`Ma tirtiraysaa shaqaalaha ${employee.username} gabi ahaanba?`)) return;
+    try {
+      await dispatch(deleteEmployee(employee._id)).unwrap();
+      toast.success("Shaqaalaha waa la tirtiray! 🗑️");
+      if (editingId === employee._id) cancelEdit();
+    } catch (err) {
+      toast.error(err || "Cillad ayaa dhacday.");
     }
   };
 
@@ -51,7 +99,7 @@ export default function Employees() {
       <form className="customer-form" onSubmit={handleSubmit}>
         <div className="form-card">
           <h3 className="card-heading">
-            <span>👤</span> Add Employee
+            <span>👤</span> {editingId ? "Edit Employee" : "Add Employee"}
           </h3>
 
           <div className="form-grid">
@@ -80,23 +128,30 @@ export default function Employees() {
             </div>
           </div>
 
-          <div className="input-group" style={{ marginTop: "20px" }}>
-            <label>Temporary Password *</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Set a starting password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          {!editingId && (
+            <div className="input-group" style={{ marginTop: "20px" }}>
+              <label>Temporary Password *</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Set a starting password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          )}
         </div>
 
         <div className="form-actions">
           <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? "Saving..." : "Add Employee"}
+            {loading ? "Saving..." : editingId ? "Save Changes" : "Add Employee"}
           </button>
+          {editingId && (
+            <button type="button" className="btn-cancel" onClick={cancelEdit}>
+              Cancel
+            </button>
+          )}
         </div>
       </form>
 
@@ -116,6 +171,7 @@ export default function Employees() {
                 <th>Email</th>
                 <th>Status</th>
                 <th>Joined</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -135,6 +191,30 @@ export default function Employees() {
                     </span>
                   </td>
                   <td>{new Date(emp.createdAt).toLocaleDateString()}</td>
+                  <td>
+                    <button
+                      onClick={() => startEdit(emp)}
+                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
+                      title="Edit Employee"
+                    >
+                      🔄️
+                    </button>
+                    <button
+                      onClick={() => handleToggle(emp)}
+                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
+                      title={emp.isActive ? "Disable Employee" : "Enable Employee"}
+                    >
+                      {emp.isActive ? "🔒" : "🔓"}
+                    </button>
+                    <button
+                      className="btn-delete-customer"
+                      onClick={() => handleDelete(emp)}
+                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
+                      title="Delete Employee"
+                    >
+                      🗑️
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
