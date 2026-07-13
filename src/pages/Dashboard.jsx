@@ -6,7 +6,6 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { deleteCustomer, archiveCustomer } from "../features/CustomerSlice";
 
-
 export default function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,6 +15,7 @@ export default function Dashboard() {
   const { customers, loading } = useSelector((state) => state.Customer);
   const { userCustomer } = useSelector((state) => state.auth);
   const isEmployee = userCustomer?.role === "employee";
+  console.log(customers);
 
   // 1. HALKAN WAXAAN KU DARNAY ?. IYO || [] SI AY SAN XOGTU U CRASH GAROOBIN
   const filteredCustomers =
@@ -28,7 +28,10 @@ export default function Dashboard() {
         customer.folderName.toLowerCase().includes(term) ||
         customer.status.toLowerCase().includes(term) ||
         customer.customerType.toLowerCase().includes(term) ||
-       (customer.PhotoType && customer.PhotoType.toLowerCase().includes(term))
+        (customer.PhotoType &&
+          customer.PhotoType.toLowerCase().includes(term)) ||
+       (customer.paymentMethod?.toLowerCase().includes(term))
+          
       );
     }) || [];
 
@@ -57,10 +60,10 @@ export default function Dashboard() {
     if (PhotoType === "FullBody")
       return { backgroundColor: "#e6f4ea", color: "#137333" };
 
-    if (PhotoType  === "ID_Card")
+    if (PhotoType === "ID_Card")
       return { backgroundColor: "#e8f0fe", color: "#1a73e8" };
 
-    if (PhotoType  === "Headshot")
+    if (PhotoType === "Headshot")
       return { backgroundColor: "#f3e8ff", color: "#7e22ce" };
 
     if (PhotoType === "Portrait")
@@ -88,7 +91,8 @@ export default function Dashboard() {
   // 🌟 PHASE 3 (fraud-prevention): row-ka waa la xayiraa haddii uu leeyahay isbeddel
   // sugaya ansixin, ama haddii uu yahay Employee oo order-ku Completed yahay
   const isRowLocked = (customer) =>
-    Boolean(customer.pendingChange) || (isEmployee && customer.status === "Completed");
+    Boolean(customer.pendingChange) ||
+    (isEmployee && customer.status === "Completed");
 
   return (
     <>
@@ -183,7 +187,11 @@ export default function Dashboard() {
                       {customer.pendingChange && (
                         <span
                           className="status-pill"
-                          style={{ backgroundColor: "#fef3c7", color: "#b45309", marginLeft: "6px" }}
+                          style={{
+                            backgroundColor: "#fef3c7",
+                            color: "#b45309",
+                            marginLeft: "6px",
+                          }}
                           title="Isbeddel ayaa sugaya ansixinta maamulaha"
                         >
                           ⏳ Pending
@@ -197,7 +205,6 @@ export default function Dashboard() {
                         style={getcustomerType(customer.customerType)}
                       >
                         {customer.customerType}
-
                       </span>
                     </td>
 
@@ -207,7 +214,6 @@ export default function Dashboard() {
                         style={getPhotoTypeStyle(customer.PhotoType)}
                       >
                         {customer.PhotoType}
-
                       </span>
                     </td>
 
@@ -217,6 +223,7 @@ export default function Dashboard() {
                         style={getPaymentMethodStyle(customer.paymentMethod)}
                       >
                         {customer.paymentMethod || "Not Recorded"}
+                        {console.log(customer.paymentMethod)}
                       </span>
                     </td>
 
@@ -232,7 +239,9 @@ export default function Dashboard() {
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          cursor: isRowLocked(customer)
+                            ? "not-allowed"
+                            : "pointer",
                           opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
@@ -241,8 +250,8 @@ export default function Dashboard() {
                           customer.pendingChange
                             ? "Isbeddel ayaa sugaya ansixin"
                             : isEmployee && customer.status === "Completed"
-                            ? "Shaqaaluhu ma tirtiri karaan order-yada Completed"
-                            : "Tirtir Macmiilka"
+                              ? "Shaqaaluhu ma tirtiri karaan order-yada Completed"
+                              : "Tirtir Macmiilka"
                         }
                       >
                         🗑️
@@ -255,7 +264,9 @@ export default function Dashboard() {
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          cursor: isRowLocked(customer)
+                            ? "not-allowed"
+                            : "pointer",
                           opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
@@ -264,8 +275,8 @@ export default function Dashboard() {
                           customer.pendingChange
                             ? "Isbeddel ayaa sugaya ansixin"
                             : isEmployee && customer.status === "Completed"
-                            ? "Shaqaaluhu ma bedeli karaan order-yada Completed"
-                            : "Bedel Macmiilka"
+                              ? "Shaqaaluhu ma bedeli karaan order-yada Completed"
+                              : "Bedel Macmiilka"
                         }
                       >
                         🔄️
@@ -285,7 +296,9 @@ export default function Dashboard() {
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          cursor: isRowLocked(customer)
+                            ? "not-allowed"
+                            : "pointer",
                           opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
@@ -294,8 +307,8 @@ export default function Dashboard() {
                           customer.pendingChange
                             ? "Isbeddel ayaa sugaya ansixin"
                             : isEmployee && customer.status === "Completed"
-                            ? "Shaqaaluhu ma kaydin karaan order-yada Completed"
-                            : "U rar Kaydka (Archive)"
+                              ? "Shaqaaluhu ma kaydin karaan order-yada Completed"
+                              : "U rar Kaydka (Archive)"
                         }
                       >
                         📂
