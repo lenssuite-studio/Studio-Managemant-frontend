@@ -8,6 +8,7 @@ import AddCustomer from "./pages/AddCustomer";
 import Layout from "./pages/Layout";
 import EditCustomer from "./pages/EditCustomer";
 import Reports from "./pages/Reports-Page";
+import Employees from "./pages/Employees";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import ManageStudios from "./pages/Admin/ManageStudios";
@@ -71,15 +72,32 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-        {/* 📸 1. STUDIO ADMIN ROUTES */}
-        <Route element={<ProtectedRoute allowedRoles={["studio_admin"]} />}>
+        {/* 📸 1. STUDIO ROUTES — Studio Manager iyo Employee labaduba way wadaagaan */}
+        <Route
+          element={
+            <ProtectedRoute
+              allowedRoles={["studio_manager", "studio_admin", "employee"]}
+            />
+          }
+        >
           <Route element={<Layout />}>
             <Route path="/Dashboard" element={<Dashboard />} />
             <Route path="/AddCustomer" element={<AddCustomer />} />
             <Route path="/EditCustomer/:id" element={<EditCustomer />} />
-            <Route path="/Reports-Page" element={<Reports />} />
             <Route path="/Support" element={<Support/>}/>
             <Route path="/Archive" element={<Archive/>} />
+          </Route>
+        </Route>
+
+        {/* 📊 1b. STUDIO MANAGER OO KALIYA — Reports iyo Team Management */}
+        <Route
+          element={
+            <ProtectedRoute allowedRoles={["studio_manager", "studio_admin"]} />
+          }
+        >
+          <Route element={<Layout />}>
+            <Route path="/Reports-Page" element={<Reports />} />
+            <Route path="/Employees" element={<Employees />} />
           </Route>
         </Route>
 

@@ -9,6 +9,7 @@ import {
   FaArchive,
   FaLifeRing,
   FaSignOutAlt,
+  FaUserFriends,
 } from "react-icons/fa";
 
 export default function Layout() {
@@ -17,6 +18,10 @@ export default function Layout() {
   const location = useLocation(); // 🌟 Wuxuu eegayaa boga aad hadda taagan tahay
 
   const { userCustomer } = useSelector((state) => state.auth);
+  // 🌟 PHASE 2: Reports iyo Team-ka waxaa arki kara Studio Manager oo kaliya, ma aha Employee
+  const isStudioManager =
+    userCustomer?.role === "studio_manager" ||
+    userCustomer?.role === "studio_admin";
 
   // Func-kan wuxuu si automatic ah ugu darayaa class-ka 'active' meeshii aad taagan tahay
   const getMenuItemClass = (path) => {
@@ -50,12 +55,23 @@ export default function Layout() {
             AddCustomer
           </div>
 
-          <div className={getMenuItemClass("/Reports-Page")} onClick={() => navigate("/Reports-Page")}>
-            <span>
-              <FaFileAlt />
-            </span>{" "}
-            Studio Reports
-          </div>
+          {isStudioManager && (
+            <div className={getMenuItemClass("/Reports-Page")} onClick={() => navigate("/Reports-Page")}>
+              <span>
+                <FaFileAlt />
+              </span>{" "}
+              Studio Reports
+            </div>
+          )}
+
+          {isStudioManager && (
+            <div className={getMenuItemClass("/Employees")} onClick={() => navigate("/Employees")}>
+              <span>
+                <FaUserFriends />
+              </span>{" "}
+              Team
+            </div>
+          )}
 
           <div className={getMenuItemClass("/Archive")} onClick={() => navigate("/Archive")}>
             <span>
