@@ -18,9 +18,11 @@ export default function EditCustomer() {
     customerType: "VIP",
     status: "Pending",
     PhotoType: "FullBody", // 🌟 KU DARID: State-ka bilowga ah waxaa lagu daray PhotoType
+    paymentMethod: "Cash",
     amountPaid: 0,
     remainingAmount: 0,
     numberOfPhotos: 0,
+    reason: "",
   });
 
   // 🔥 GET SINGLE CUSTOMER (from list)
@@ -184,6 +186,32 @@ export default function EditCustomer() {
             <option value="Delivered">Delivered</option>
             <option value="Completed">Completed</option>
           </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Payment Method</label>
+          <select
+            name="paymentMethod"
+            value={formData.paymentMethod || "Cash"}
+            onChange={handleChange}
+            className="form-select"
+          >
+            <option value="Cash">Cash</option>
+            <option value="Edahab">Edahab</option>
+            <option value="SAAD">SAAD</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Reason for Change (optional)</label>
+          <textarea
+            name="reason"
+            value={formData.reason || ""}
+            onChange={handleChange}
+            className="form-input"
+            placeholder="Why are you requesting this change? (optional)"
+            rows={3}
+          />
         </div>
 
         <button type="submit" className="btn-submit-customer">

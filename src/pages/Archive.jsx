@@ -60,6 +60,13 @@ export default function Archive() {
     return { backgroundColor: "#fef7e0", color: "#b06000" };
   };
 
+  const getPaymentMethodStyle = (paymentMethod) => {
+    if (paymentMethod === "Cash") return { backgroundColor: "#e6f4ea", color: "#137333" };
+    if (paymentMethod === "Edahab") return { backgroundColor: "#ffedd5", color: "#c2410c" };
+    if (paymentMethod === "SAAD") return { backgroundColor: "#e0e7ff", color: "#4338ca" };
+    return { backgroundColor: "#f1f5f9", color: "#475569" };
+  };
+
   return (
     <>
       {/* HEADER-KA BOGGA ARCHIVE */}
@@ -116,6 +123,7 @@ export default function Archive() {
                 <th>Status</th>
                 <th>customerType</th>
                 <th>PhotoType</th>
+                <th>Payment Method</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -166,6 +174,11 @@ export default function Archive() {
                     <td>
                       <span className="status-pill" style={{ backgroundColor: "#e8f0fe", color: "#1a73e8" }}>
                         {customer.PhotoType}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="status-pill" style={getPaymentMethodStyle(customer.paymentMethod)}>
+                        {customer.paymentMethod || "Not Recorded"}
                       </span>
                     </td>
                     <td>

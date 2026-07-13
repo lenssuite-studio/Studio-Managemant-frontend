@@ -18,6 +18,7 @@ export default function AddCustomer() {
     status: "Pending", 
     customerType: "VIP",
     PhotoType: "FullBody",
+    paymentMethod: "Cash",
     amountPaid: 0,
     remainingAmount: 0,
     numberOfPhotos: 0,
@@ -182,6 +183,21 @@ export default function AddCustomer() {
               <option value="Pending">Pending</option>
               <option value="Delivered">Delivered</option>
               <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <div className="input-group" style={{ marginTop: "20px" }}>
+            <label>Payment Method *</label>
+            <select
+              className="form-select"
+              name="paymentMethod"
+              value={FromData.paymentMethod}
+              onChange={handleChange}
+              required
+            >
+              <option value="Cash">Cash</option>
+              <option value="Edahab">Edahab</option>
+              <option value="SAAD">SAAD</option>
             </select>
           </div>
         </div>

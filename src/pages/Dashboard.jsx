@@ -75,6 +75,16 @@ export default function Dashboard() {
     return { backgroundColor: "#f1f5f9", color: "#475569" };
   };
 
+  const getPaymentMethodStyle = (paymentMethod) => {
+    if (paymentMethod === "Cash")
+      return { backgroundColor: "#e6f4ea", color: "#137333" };
+    if (paymentMethod === "Edahab")
+      return { backgroundColor: "#ffedd5", color: "#c2410c" };
+    if (paymentMethod === "SAAD")
+      return { backgroundColor: "#e0e7ff", color: "#4338ca" };
+    return { backgroundColor: "#f1f5f9", color: "#475569" };
+  };
+
   // 🌟 PHASE 3 (fraud-prevention): row-ka waa la xayiraa haddii uu leeyahay isbeddel
   // sugaya ansixin, ama haddii uu yahay Employee oo order-ku Completed yahay
   const isRowLocked = (customer) =>
@@ -134,6 +144,7 @@ export default function Dashboard() {
                 <th>Status</th>
                 <th>customerType</th>
                 <th>PhotoType</th>
+                <th>Payment Method</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -196,7 +207,16 @@ export default function Dashboard() {
                         style={getPhotoTypeStyle(customer.PhotoType)}
                       >
                         {customer.PhotoType}
-                          
+
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        className="status-pill"
+                        style={getPaymentMethodStyle(customer.paymentMethod)}
+                      >
+                        {customer.paymentMethod || "Not Recorded"}
                       </span>
                     </td>
 
@@ -286,7 +306,7 @@ export default function Dashboard() {
               ) : (
                 <tr>
                   <td
-                    colSpan="12"
+                    colSpan="13"
                     style={{ textAlign: "center", padding: "20px" }}
                   >
                     Wax macaamiil ah lama helin.

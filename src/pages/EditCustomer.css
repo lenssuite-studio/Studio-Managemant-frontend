@@ -69,6 +69,12 @@
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
+textarea.form-input {
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
 /* Grid-ka isku xiraya Number of photos, amount iyo remaining */
 .form-group-grid {
   display: grid;

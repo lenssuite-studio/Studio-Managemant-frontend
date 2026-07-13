@@ -177,6 +177,25 @@ export default function Finance() {
         </div>
       </div>
 
+      {/* PAYMENT METHOD BREAKDOWN */}
+      <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
+        <h3 style={{ marginBottom: "16px", color: "#1e293b", fontSize: "16px" }}>💳 Payment Method Breakdown</h3>
+        <div className="segment-list" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+          {!report?.paymentBreakdown || report.paymentBreakdown.length === 0 ? (
+            <span style={{ color: "#64748b", fontSize: "14px" }}>Wax xog ah lama helin muddadan.</span>
+          ) : (
+            report.paymentBreakdown.map((p) => (
+              <div key={p.paymentMethod} style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                <span style={{ color: "#64748b" }}>{p.paymentMethod}</span>
+                <span style={{ fontWeight: "600", color: "#1e293b" }}>
+                  {p.count} orders — ${p.totalPaid.toLocaleString()}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
       {/* CHARTS */}
       <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
         <FinanceCharts trend={trend} currentPeriod={{ income, expenses: totalExpenses, netProfit }} />

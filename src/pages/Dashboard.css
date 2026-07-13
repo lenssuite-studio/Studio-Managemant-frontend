@@ -409,7 +409,7 @@
 
   .lenssuite-table {
     table-layout: auto; /* Wuxuu u oggolaanayaa tiirarku inay u fidaan dhererkooda saxda ah */
-    min-width: 950px; /* Wuxuu qasbayaa in miisku uusan ka yaraan 950px si xogtu u neefsato */
+    min-width: 1080px; /* Wuxuu qasbayaa in miisku uusan ka yaraan 1080px si xogtu u neefsato (tiirka Payment Method ayaa la daray) */
   }
 
   .lenssuite-table th,

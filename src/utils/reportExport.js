@@ -65,6 +65,18 @@ export function exportReportToPDF(report, periodLabel) {
       : [["No data for this period", ""]],
   });
 
+  nextY = doc.lastAutoTable.finalY + 12;
+  doc.setFontSize(12);
+  doc.text("Payment Method Breakdown", 14, nextY - 4);
+
+  autoTable(doc, {
+    startY: nextY,
+    head: [["Payment Method", "Orders", "Amount Collected"]],
+    body: report.paymentBreakdown && report.paymentBreakdown.length
+      ? report.paymentBreakdown.map((p) => [p.paymentMethod || "—", String(p.count), `$${p.totalPaid.toLocaleString()}`])
+      : [["No data for this period", "", ""]],
+  });
+
   doc.save(`studio-report-${fromStr}-to-${toStr}.pdf`);
 }
 
@@ -97,10 +109,19 @@ export function exportReportToExcel(report, periodLabel) {
     })),
   );
 
+  const paymentSheet = XLSX.utils.json_to_sheet(
+    (report.paymentBreakdown || []).map((p) => ({
+      "Payment Method": p.paymentMethod,
+      Orders: p.count,
+      "Amount Collected": p.totalPaid,
+    })),
+  );
+
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
   XLSX.utils.book_append_sheet(workbook, employeeSheet, "Employee Performance");
   XLSX.utils.book_append_sheet(workbook, serviceSheet, "Service Breakdown");
+  XLSX.utils.book_append_sheet(workbook, paymentSheet, "Payment Breakdown");
 
   XLSX.writeFile(workbook, `studio-report-${fromStr}-to-${toStr}.xlsx`);
 }

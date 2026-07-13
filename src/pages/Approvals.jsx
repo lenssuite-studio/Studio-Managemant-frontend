@@ -12,13 +12,22 @@ import "./Dashboard.css";
 const actionLabels = { edit: "Edit", delete: "Delete", archive: "Archive" };
 
 function DiffView({ pendingChange }) {
+  const reasonNote = pendingChange.reason ? (
+    <div style={{ fontSize: "12px", color: "#64748b", fontStyle: "italic", marginBottom: "6px" }}>
+      💬 {pendingChange.reason}
+    </div>
+  ) : null;
+
   if (pendingChange.actionType !== "edit") {
     return (
-      <span style={{ color: "#64748b", fontSize: "13px" }}>
-        {pendingChange.actionType === "delete"
-          ? "Codsi ah in order-ka gabi ahaanba la tirtiro"
-          : "Codsi ah in order-ka la kaydiyo (archive)"}
-      </span>
+      <div>
+        {reasonNote}
+        <span style={{ color: "#64748b", fontSize: "13px" }}>
+          {pendingChange.actionType === "delete"
+            ? "Codsi ah in order-ka gabi ahaanba la tirtiro"
+            : "Codsi ah in order-ka la kaydiyo (archive)"}
+        </span>
+      </div>
     );
   }
 
@@ -26,6 +35,7 @@ function DiffView({ pendingChange }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      {reasonNote}
       {fields.map((field) => (
         <div key={field} style={{ fontSize: "13px" }}>
           <strong>{field}:</strong>{" "}
