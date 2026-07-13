@@ -3,6 +3,7 @@ import "./Dashboard.css"; // Waxaad dib u isticmaali kartaa CSS-kii Dashboard-ka
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomer, deleteCustomer } from "../features/CustomerSlice";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function Archive() {
   const navigate = useNavigate();
@@ -11,6 +12,26 @@ export default function Archive() {
 
   // Soo qaado xogta iyo loading-ka
   const { customers, loading } = useSelector((state) => state.Customer);
+  const { userCustomer } = useSelector((state) => state.auth);
+  const isEmployee = userCustomer?.role === "employee";
+
+  // 🌟 PHASE 3 (fraud-prevention): isku mid la Dashboard-ka
+  const isRowLocked = (customer) =>
+    Boolean(customer.pendingChange) || (isEmployee && customer.status === "Completed");
+
+  const handleDelete = async (customer) => {
+    if (!window.confirm("Ma tirtiraysaa macmiilkan kaydsan gabi ahaanba?")) return;
+    try {
+      const result = await dispatch(deleteCustomer(customer._id)).unwrap();
+      if (result?.pending) {
+        toast.success(result.message || "Codsiga tirtiridda waxaa loo diray maamulaha si loo ansixiyo.");
+      } else {
+        toast.success("Macmiilka waa la tirtiray! 🗑️");
+      }
+    } catch (err) {
+      toast.error(err || "Cillad ayaa dhacday.");
+    }
+  };
 
   // 🌟 FILTER-KA ARCHIVE-KA: KALIYA SOO REEB KUWA LA ARCHIVE-GAREEYEY (isArchived === true)
   const archivedCustomers =
@@ -127,6 +148,15 @@ export default function Archive() {
                       >
                         {customer.status}
                       </span>
+                      {customer.pendingChange && (
+                        <span
+                          className="status-pill"
+                          style={{ backgroundColor: "#fef3c7", color: "#b45309", marginLeft: "6px" }}
+                          title="Isbeddel ayaa sugaya ansixinta maamulaha"
+                        >
+                          ⏳ Pending
+                        </span>
+                      )}
                     </td>
                     <td>
                       <span className="status-pill" style={{ backgroundColor: "#e8f0fe", color: "#1a73e8" }}>
@@ -142,19 +172,23 @@ export default function Archive() {
                       {/* TIRTIR KALIYA AYAA REEBAN MAADAAMA UU KAYD YAHAY */}
                       <button
                         className="btn-delete-customer"
-                        onClick={() => {
-                          if (window.confirm("Ma tirtiraysaa macmiilkan kaydsan gabi ahaanba?")) {
-                            dispatch(deleteCustomer(customer._id));
-                          }
-                        }}
+                        disabled={isRowLocked(customer)}
+                        onClick={() => handleDelete(customer)}
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: "pointer",
+                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
                         }}
-                        title="Gabi ahaanba Tirtir"
+                        title={
+                          customer.pendingChange
+                            ? "Isbeddel ayaa sugaya ansixin"
+                            : isEmployee && customer.status === "Completed"
+                            ? "Shaqaaluhu ma tirtiri karaan order-yada Completed"
+                            : "Gabi ahaanba Tirtir"
+                        }
                       >
                         🗑️
                       </button>

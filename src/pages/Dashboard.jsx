@@ -14,6 +14,8 @@ export default function Dashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   // Soo qaado xogta iyo loading-ka
   const { customers, loading } = useSelector((state) => state.Customer);
+  const { userCustomer } = useSelector((state) => state.auth);
+  const isEmployee = userCustomer?.role === "employee";
 
   // 1. HALKAN WAXAAN KU DARNAY ?. IYO || [] SI AY SAN XOGTU U CRASH GAROOBIN
   const filteredCustomers =
@@ -72,6 +74,11 @@ export default function Dashboard() {
 
     return { backgroundColor: "#f1f5f9", color: "#475569" };
   };
+
+  // 🌟 PHASE 3 (fraud-prevention): row-ka waa la xayiraa haddii uu leeyahay isbeddel
+  // sugaya ansixin, ama haddii uu yahay Employee oo order-ku Completed yahay
+  const isRowLocked = (customer) =>
+    Boolean(customer.pendingChange) || (isEmployee && customer.status === "Completed");
 
   return (
     <>
@@ -162,6 +169,15 @@ export default function Dashboard() {
                       >
                         {customer.status}
                       </span>
+                      {customer.pendingChange && (
+                        <span
+                          className="status-pill"
+                          style={{ backgroundColor: "#fef3c7", color: "#b45309", marginLeft: "6px" }}
+                          title="Isbeddel ayaa sugaya ansixinta maamulaha"
+                        >
+                          ⏳ Pending
+                        </span>
+                      )}
                     </td>
 
                     <td>
@@ -170,7 +186,7 @@ export default function Dashboard() {
                         style={getcustomerType(customer.customerType)}
                       >
                         {customer.customerType}
-                     
+
                       </span>
                     </td>
 
@@ -187,6 +203,7 @@ export default function Dashboard() {
                     <td>
                       <button
                         className="btn-delete-customer"
+                        disabled={isRowLocked(customer)}
                         onClick={() => {
                           if (window.confirm("Ma tirtiraysaa customer-kan?")) {
                             dispatch(deleteCustomer(customer._id));
@@ -195,30 +212,47 @@ export default function Dashboard() {
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: "pointer",
+                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
                         }}
-                        title="Tirtir Macmiilka"
+                        title={
+                          customer.pendingChange
+                            ? "Isbeddel ayaa sugaya ansixin"
+                            : isEmployee && customer.status === "Completed"
+                            ? "Shaqaaluhu ma tirtiri karaan order-yada Completed"
+                            : "Tirtir Macmiilka"
+                        }
                       >
                         🗑️
                       </button>
                       <button
+                        disabled={isRowLocked(customer)}
                         onClick={() =>
                           navigate(`/EditCustomer/${customer._id}`)
                         }
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: "pointer",
+                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
                         }}
+                        title={
+                          customer.pendingChange
+                            ? "Isbeddel ayaa sugaya ansixin"
+                            : isEmployee && customer.status === "Completed"
+                            ? "Shaqaaluhu ma bedeli karaan order-yada Completed"
+                            : "Bedel Macmiilka"
+                        }
                       >
                         🔄️
                       </button>
                       {/*Adchive*/}
                       <button
+                        disabled={isRowLocked(customer)}
                         onClick={() => {
                           if (
                             window.confirm(
@@ -231,11 +265,18 @@ export default function Dashboard() {
                         style={{
                           background: "none",
                           border: "none",
-                          cursor: "pointer",
+                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
+                          opacity: isRowLocked(customer) ? 0.4 : 1,
                           fontSize: "16px",
                           padding: "5px 10px",
                         }}
-                        title="U rar Kaydka (Archive)"
+                        title={
+                          customer.pendingChange
+                            ? "Isbeddel ayaa sugaya ansixin"
+                            : isEmployee && customer.status === "Completed"
+                            ? "Shaqaaluhu ma kaydin karaan order-yada Completed"
+                            : "U rar Kaydka (Archive)"
+                        }
                       >
                         📂
                       </button>

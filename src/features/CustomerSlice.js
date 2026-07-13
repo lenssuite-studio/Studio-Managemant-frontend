@@ -2,6 +2,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "./axiosInstance";
 import axios, { Axios } from "axios";
 
+// 🌟 PHASE 3 (fraud-prevention): marka Employee codsan yahay isbeddel, halkii
+// customer-ka la bedeli lahaa, waxaan calaamadeynaa inuu sugayo ansixin
+function markPending(customers, customerId, actionType) {
+  return customers.map((c) =>
+    c._id === customerId
+      ? { ...c, pendingChange: { actionType } }
+      : c,
+  );
+}
+
 // 1. GET CUSTOMER
 export const getCustomer = createAsyncThunk(
   "Customers/getCustomer",
@@ -34,11 +44,17 @@ export const addCustomer = createAsyncThunk(
 );
 
 // 3. UPDATE CUSTOMER
+// 🌟 PHASE 3 (fraud-prevention): haddii isticmaaluhu yahay Employee, backend-ku
+// isma dhaqaajiyo customer-ka toos ahaan — wuxuu soo celiyaa { pending: true, ... }
+// halkii uu soo celin lahaa macmiilkii cusub.
 export const updateCustomer = createAsyncThunk(
   "Customer/updateCustomer",
   async ({ id, customerData }, thunkAPI) => {
     try {
       const response = await API.put(`/Customer/Edit/${id}`, customerData);
+      if (response.data?.pending) {
+        return { pending: true, customerId: id, message: response.data.message };
+      }
       return response.data; // Waxay soo celinaysaa macmiilkii oo la beddelay
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -53,8 +69,11 @@ export const deleteCustomer = createAsyncThunk(
   "Customer/deleteCustomer",
   async (id, thunkAPI) => {
     try {
-      await API.delete(`/Customer/Delete/${id}`);
-      return id; // 🔥 Waxaan toos u soo celinaynaa ID-ga si filter-ku u helo
+      const response = await API.delete(`/Customer/Delete/${id}`);
+      if (response.data?.pending) {
+        return { pending: true, customerId: id, message: response.data.message };
+      }
+      return { pending: false, customerId: id }; // 🔥 Waxaan toos u soo celinaynaa ID-ga si filter-ku u helo
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.error || error.message,
@@ -70,6 +89,9 @@ export const archiveCustomer = createAsyncThunk(
     try {
       // Wuxuu wacayaa endpoint-ka backend-ka ee u xilsaaran archive-ka
       const response = await API.put(`/Customer/Archive/${id}`);
+      if (response.data?.pending) {
+        return { pending: true, customerId: id, message: response.data.message };
+      }
       return response.data; // Wuxuu soo celinayaa macmiilkii oo la rariyo { _id, isArchived: true, ... }
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -128,10 +150,13 @@ const CustomerSlice = createSlice({
       })
       .addCase(deleteCustomer.fulfilled, (state, action) => {
         state.loading = false;
-        // 🔥 Maadaama thunk-ku soo celiyey kaliya id, halkan toos ayaan u weidnaa action.payload
-        state.customers = state.customers.filter(
-          (c) => c._id !== action.payload,
-        );
+        if (action.payload.pending) {
+          state.customers = markPending(state.customers, action.payload.customerId, "delete");
+        } else {
+          state.customers = state.customers.filter(
+            (c) => c._id !== action.payload.customerId,
+          );
+        }
       })
       .addCase(deleteCustomer.rejected, (state, action) => {
         state.loading = false;
@@ -141,9 +166,13 @@ const CustomerSlice = createSlice({
       // UPDATE CUSTOMER
       .addCase(updateCustomer.fulfilled, (state, action) => {
         state.loading = false;
-        state.customers = state.customers.map((c) =>
-          c._id === action.payload._id ? action.payload : c,
-        );
+        if (action.payload.pending) {
+          state.customers = markPending(state.customers, action.payload.customerId, "edit");
+        } else {
+          state.customers = state.customers.map((c) =>
+            c._id === action.payload._id ? action.payload : c,
+          );
+        }
       })
       .addCase(archiveCustomer.pending, (state) => {
         state.loading = true;
@@ -151,10 +180,14 @@ const CustomerSlice = createSlice({
       }) //ADDACHIVE
       .addCase(archiveCustomer.fulfilled, (state, action) => {
         state.loading = false;
-        // Map ayaan la dhex jafaynaa si macmiilka la archive-gareeyey loogu beddelo kan cusub ee backend-ka ka yimid
-        state.customers = state.customers.map((c) =>
-          c._id === action.payload._id ? action.payload : c,
-        );
+        if (action.payload.pending) {
+          state.customers = markPending(state.customers, action.payload.customerId, "archive");
+        } else {
+          // Map ayaan la dhex jafaynaa si macmiilka la archive-gareeyey loogu beddelo kan cusub ee backend-ka ka yimid
+          state.customers = state.customers.map((c) =>
+            c._id === action.payload._id ? action.payload : c,
+          );
+        }
       })
       .addCase(archiveCustomer.rejected, (state, action) => {
         state.loading = false;

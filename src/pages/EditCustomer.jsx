@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../features/axiosInstance";
 import { useDispatch } from "react-redux";
 import { updateCustomer } from "../features/CustomerSlice";
 import "./EditCustomer.css";
@@ -26,14 +26,9 @@ export default function EditCustomer() {
   // 🔥 GET SINGLE CUSTOMER (from list)
   useEffect(() => {
     const fetchData = async () => {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get(
-        "https://studio-managemant-backend.onrender.com/api/Customer/List",
-        {
-          headers: { Authorization: token },
-        }
-      );
+      // 🌟 SAXID: Waxaan isticmaaleynaa API instance-ka la wadaago (Bearer token sax ah)
+      // halkii aan isticmaali lahayn axios tooska ah oo isticmaali jiray 'token' oo aan jirin
+      const res = await API.get("/Customer/List");
 
       const customer = res.data.find((c) => c._id === id);
 
@@ -59,10 +54,15 @@ export default function EditCustomer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await dispatch(updateCustomer({ id, customerData: formData })).unwrap();
+    const result = await dispatch(updateCustomer({ id, customerData: formData })).unwrap();
 
-    alert("Customer updated successfully ✅");
-    toast.success("Customer si guulle loo updated greyey");
+    // 🌟 PHASE 3 (fraud-prevention): Employee-ka codsigiisu wuxuu sugayaa ansixin,
+    // marka farriinta la muujiyo waa in ay saxdo waxa dhab ahaan dhacay
+    if (result?.pending) {
+      toast.success(result.message || "Isbeddelkaaga waxaa loo diray maamulaha si loo ansixiyo.");
+    } else {
+      toast.success("Customer si guul leh ayaa loo cusboonaysiiyay ✅");
+    }
 
     navigate("/Dashboard");
   };

@@ -10,6 +10,8 @@ import EditCustomer from "./pages/EditCustomer";
 import Reports from "./pages/Reports-Page";
 import Employees from "./pages/Employees";
 import Profile from "./pages/Profile";
+import Approvals from "./pages/Approvals";
+import ActivityHistory from "./pages/ActivityHistory";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminLayout from "./pages/Admin/AdminLayout";
 import ManageStudios from "./pages/Admin/ManageStudios";
@@ -100,6 +102,8 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/Reports-Page" element={<Reports />} />
             <Route path="/Employees" element={<Employees />} />
+            <Route path="/Approvals" element={<Approvals />} />
+            <Route path="/ActivityHistory" element={<ActivityHistory />} />
           </Route>
         </Route>
 

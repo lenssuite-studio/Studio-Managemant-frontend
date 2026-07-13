@@ -6,6 +6,8 @@ import adminReducer  from "../features/AdminSlice"
 import passwordReducer from "../features/passwordSlice"
 import EmployeeReducer from "../features/EmployeeSlice"
 import ProfileReducer from "../features/ProfileSlice"
+import ApprovalsReducer from "../features/ApprovalsSlice"
+import ActivityHistoryReducer from "../features/ActivityHistorySlice"
 
 export const store = configureStore({
   reducer: {
@@ -15,5 +17,7 @@ export const store = configureStore({
     password:passwordReducer,
     Employee: EmployeeReducer,
     Profile: ProfileReducer,
+    Approvals: ApprovalsReducer,
+    ActivityHistory: ActivityHistoryReducer,
   },
 });

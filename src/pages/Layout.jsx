@@ -11,6 +11,8 @@ import {
   FaSignOutAlt,
   FaUserFriends,
   FaUserCircle,
+  FaCheckDouble,
+  FaHistory,
 } from "react-icons/fa";
 
 export default function Layout() {
@@ -71,6 +73,24 @@ export default function Layout() {
                 <FaUserFriends />
               </span>{" "}
               Team
+            </div>
+          )}
+
+          {isStudioManager && (
+            <div className={getMenuItemClass("/Approvals")} onClick={() => navigate("/Approvals")}>
+              <span>
+                <FaCheckDouble />
+              </span>{" "}
+              Approvals
+            </div>
+          )}
+
+          {isStudioManager && (
+            <div className={getMenuItemClass("/ActivityHistory")} onClick={() => navigate("/ActivityHistory")}>
+              <span>
+                <FaHistory />
+              </span>{" "}
+              Activity History
             </div>
           )}
 
