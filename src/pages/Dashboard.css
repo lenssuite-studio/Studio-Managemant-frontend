@@ -11,7 +11,7 @@
 
 /* 📌 SIDEBAR-KA: WALIGII WUU TAAGNAANAYAA, MA SCROLL-GARAOOMAYO */
 .lenssuite-sidebar {
-  width: 260px;
+  width: var(--sidebar-width);
   height: 100vh; /* Dhererka buuxa ee shaashadda */
   position: sticky; /* Wuxuu ku dhegganaanayaa meesha ugu sarreysa */
   top: 0;
@@ -19,10 +19,16 @@
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  padding: var(--space-6);
+  padding: var(--space-6) var(--space-4);
   flex-shrink: 0; /* 🔥 SAXID: Ka hortag inuu isku ururo shaashadaha waaweyn */
   box-sizing: border-box;
-  transition: background-color var(--transition-base), border-color var(--transition-base);
+  transition: width var(--transition-slow), background-color var(--transition-base), border-color var(--transition-base);
+}
+
+.lenssuite-sidebar.collapsed {
+  width: var(--sidebar-width-collapsed);
+  padding-left: var(--space-3);
+  padding-right: var(--space-3);
 }
 
 /* 🖥️ MIDIGTA (CONTENT-KA): ISAGA AYAA SCROLL SAMAYNAYA HADDII MACAAMIISHU BADATO */
@@ -51,15 +57,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-10);
+  margin-bottom: var(--space-8);
+  padding: 0 var(--space-2);
+  min-height: 40px;
 }
 
 .brand-icon {
   background-color: var(--color-primary);
   color: white;
-  padding: var(--space-3);
+  width: 40px;
+  height: 40px;
   border-radius: var(--radius-lg);
   font-size: var(--text-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px -2px rgba(79, 70, 229, 0.45);
 }
 
 .sidebar-brand h3 {
@@ -67,38 +81,101 @@
   font-size: var(--text-base);
   font-weight: 600;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .sidebar-brand p {
   margin: 0;
   font-size: var(--text-xs);
   color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.lenssuite-sidebar.collapsed .sidebar-brand-text {
+  opacity: 0;
+  width: 0;
+}
+
+.sidebar-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: var(--transition-smooth);
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.lenssuite-sidebar.collapsed .sidebar-toggle-btn {
+  margin-left: 0;
 }
 
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
   flex-grow: 1; /* Wuxuu hoos u riixayaa footer-ka guud */
 }
 
 .menu-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
+  margin: 0 var(--space-1);
   color: var(--text-muted);
   font-weight: 500;
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
+  letter-spacing: 0.01em;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: var(--transition-smooth);
+  transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
 }
 
 .menu-item span {
   font-size: var(--text-lg);
   display: flex;
+  flex-shrink: 0;
   transition: transform var(--transition-fast);
+}
+
+.menu-item .label {
+  white-space: nowrap;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.lenssuite-sidebar.collapsed .menu-item {
+  justify-content: center;
+  padding: var(--space-3);
+  margin: 0;
+}
+
+.lenssuite-sidebar.collapsed .menu-item .label {
+  opacity: 0;
+  width: 0;
 }
 
 .menu-item:hover {
@@ -110,18 +187,49 @@
   transform: scale(1.08);
 }
 
-/* 🔥 KAN WUXUU SI TOOS AH U SHIDAYAA LINK-KA UU USER-KU GUUD QAADANAYO */
+/* 🔥 KAN WUXUU SI TOOS AH U SHIDAYAA LINK-KA UU USER-KU GUUD QAADANAYO
+   Casri ah: tint khafiif ah + xariiq-dhinac (accent bar) halkii ay ka ahaan
+   lahayd block midab buuxa ah — muuqaal premium SaaS dashboard ah. */
 .menu-item.active {
+  background-color: var(--color-primary-tint);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.menu-item.active::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 18%;
+  bottom: 18%;
+  width: 3px;
+  border-radius: var(--radius-full);
   background-color: var(--color-primary);
-  color: #ffffff;
+}
+
+.lenssuite-sidebar.collapsed .menu-item.active::before {
+  left: 2px;
 }
 
 .sidebar-footer {
   border-top: 1px solid var(--border-color);
   padding-top: var(--space-4);
+  margin-top: var(--space-2);
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
+}
+
+.lenssuite-sidebar.collapsed .theme-toggle-btn {
+  justify-content: center;
+  padding-left: var(--space-3) !important;
+  padding-right: var(--space-3) !important;
+}
+
+.lenssuite-sidebar.collapsed .theme-toggle-btn .label {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 /* Dashboard Row Elements */
@@ -148,32 +256,34 @@
   color: white;
   padding: var(--space-3) var(--space-5);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   font-weight: 600;
   cursor: pointer;
   font-size: var(--text-base);
-  transition: background-color var(--transition-base), transform var(--transition-fast), box-shadow var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
 }
 
 .btn-add-customer:hover {
   background-color: var(--color-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 
 .btn-add-customer:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* 📊 TABLE DESIGN: WUXUU SHUQLO BIYO-COOD AH KU LEEYAHAY SHAAHSADDA WEYN */
 .table-container {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   width: 100%; /* Wuxuu si buuxda u raacayaa ballaca main-ka */
   overflow-x: auto;
-  transition: background-color var(--transition-base), border-color var(--transition-base);
+  transition: background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 .lenssuite-table {
@@ -186,28 +296,43 @@
 
 .lenssuite-table th {
   background-color: var(--bg-subtle-strong);
-  padding: var(--space-4) var(--space-3);
+  padding: var(--space-4) var(--space-5);
   color: var(--text-muted-2);
   font-weight: 600;
-  font-size: var(--text-sm);
+  font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
   border-bottom: 1px solid var(--border-color);
   white-space: nowrap;
 }
 
+.lenssuite-table th:first-child {
+  border-top-left-radius: var(--radius-xl);
+}
+
+.lenssuite-table th:last-child {
+  border-top-right-radius: var(--radius-xl);
+}
+
 .lenssuite-table td {
-  padding: var(--space-3);
+  padding: var(--space-4) var(--space-5);
   border-bottom: 1px solid var(--bg-subtle);
   color: var(--text-tertiary);
+  vertical-align: middle;
 }
 
 .lenssuite-table tbody tr {
-  transition: background-color var(--transition-fast);
+  border-left: 3px solid transparent;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.lenssuite-table tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .lenssuite-table tbody tr:hover {
   background-color: var(--bg-subtle);
+  border-left-color: var(--color-primary);
 }
 
 .td-name {
@@ -225,12 +350,31 @@
 }
 
 .status-pill {
-  padding: 4px 10px;
+  position: relative;
+  padding: 5px 12px 5px 24px;
   border-radius: var(--radius-full);
-  font-size: var(--text-xs);
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   display: inline-block;
-  transition: transform var(--transition-fast);
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.status-pill::before {
+  content: "";
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.lenssuite-table tbody tr:hover .status-pill {
+  box-shadow: var(--shadow-sm);
 }
 
 .td-paid {
@@ -267,7 +411,8 @@
   color: var(--text-tertiary);
   font-size: var(--text-base);
   outline: none;
-  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
 }
 
 .search-input:focus {
@@ -279,10 +424,11 @@
 .form-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: var(--space-6);
   margin-bottom: var(--space-6);
-  transition: background-color var(--transition-base), border-color var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
 }
 
 .form-grid {
@@ -425,13 +571,34 @@
     flex-direction: column; /* Sidebar-ka iyo Content-ka isku dhex dhacaya hoos iyo kor */
   }
 
-  .lenssuite-sidebar {
+  .lenssuite-sidebar,
+  .lenssuite-sidebar.collapsed {
     width: 100%;
     height: auto;
     position: relative;
     padding: var(--space-4);
     border-right: none;
     border-bottom: 1px solid var(--border-color);
+  }
+
+  /* Collapse is a desktop-only affordance — the row-strip layout below
+     already keeps the sidebar compact on small screens. */
+  .sidebar-toggle-btn {
+    display: none;
+  }
+
+  .lenssuite-sidebar.collapsed .sidebar-brand-text,
+  .lenssuite-sidebar.collapsed .menu-item .label,
+  .lenssuite-sidebar.collapsed .theme-toggle-btn .label {
+    opacity: 1;
+    width: auto;
+    overflow: visible;
+  }
+
+  .lenssuite-sidebar.collapsed .theme-toggle-btn {
+    justify-content: flex-start;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
   }
 
   .sidebar-brand {
@@ -444,8 +611,11 @@
     padding-bottom: var(--space-2);
   }
 
-  .menu-item {
+  .menu-item,
+  .lenssuite-sidebar.collapsed .menu-item {
+    justify-content: flex-start;
     padding: var(--space-2) var(--space-3);
+    margin: 0;
     white-space: nowrap;
   }
 

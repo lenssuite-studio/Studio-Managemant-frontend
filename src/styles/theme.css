@@ -36,6 +36,12 @@
   --color-admin-sidebar: #563865;
   --color-whatsapp: #25d366;
   --color-whatsapp-hover: #1ebd58;
+  --color-primary-tint: rgba(79, 70, 229, 0.1);
+  --color-primary-tint-strong: rgba(79, 70, 229, 0.16);
+
+  /* Sidebar collapse */
+  --sidebar-width: 260px;
+  --sidebar-width-collapsed: 84px;
 
   /* Neutral surfaces & text (light) */
   --bg-page: #f8fafc;
@@ -53,19 +59,21 @@
   --border-color-strong: #cbd5e1;
   --input-bg: #ffffff;
 
-  /* Semantic pairs (bg/text) — same hues in both themes, only intensity shifts */
-  --color-success-bg: #e6f4ea;
+  /* Semantic pairs (bg/text) — same hues in both themes, only intensity shifts.
+     Backgrounds are alpha-based (not solid pastels) so pills/badges read as
+     modern "tinted glass" chips and adapt cleanly to whatever surface they sit on. */
+  --color-success-bg: rgba(22, 163, 74, 0.12);
   --color-success-text: #137333;
   --color-success-solid: #16a34a;
-  --color-info-bg: #e8f0fe;
+  --color-info-bg: rgba(26, 115, 232, 0.12);
   --color-info-text: #1a73e8;
-  --color-purple-bg: #f3e8ff;
+  --color-purple-bg: rgba(126, 34, 206, 0.12);
   --color-purple-text: #7e22ce;
-  --color-warning-bg: #fef7e0;
+  --color-warning-bg: rgba(176, 96, 0, 0.12);
   --color-warning-text: #b06000;
-  --color-danger-bg: #fee2e2;
+  --color-danger-bg: rgba(220, 38, 38, 0.12);
   --color-danger-text: #dc2626;
-  --color-pink-bg: #fce7f3;
+  --color-pink-bg: rgba(219, 39, 119, 0.12);
   --color-pink-text: #db2777;
 
   /* Spacing scale (4px rhythm) */
@@ -137,18 +145,21 @@
     --border-color-strong: #3a4358;
     --input-bg: #1a202e;
 
-    --color-success-bg: #0f2a1c;
+    --color-success-bg: rgba(74, 222, 128, 0.16);
     --color-success-text: #4ade80;
-    --color-info-bg: #0f2138;
+    --color-info-bg: rgba(125, 184, 255, 0.16);
     --color-info-text: #7db8ff;
-    --color-purple-bg: #241536;
+    --color-purple-bg: rgba(211, 164, 255, 0.16);
     --color-purple-text: #d3a4ff;
-    --color-warning-bg: #2e2410;
+    --color-warning-bg: rgba(251, 191, 36, 0.16);
     --color-warning-text: #fbbf24;
-    --color-danger-bg: #341417;
+    --color-danger-bg: rgba(248, 113, 113, 0.16);
     --color-danger-text: #f87171;
-    --color-pink-bg: #331525;
+    --color-pink-bg: rgba(244, 114, 182, 0.16);
     --color-pink-text: #f472b6;
+
+    --color-primary-tint: rgba(129, 120, 245, 0.16);
+    --color-primary-tint-strong: rgba(129, 120, 245, 0.24);
 
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
@@ -174,18 +185,21 @@
   --border-color-strong: #3a4358;
   --input-bg: #1a202e;
 
-  --color-success-bg: #0f2a1c;
+  --color-success-bg: rgba(74, 222, 128, 0.16);
   --color-success-text: #4ade80;
-  --color-info-bg: #0f2138;
+  --color-info-bg: rgba(125, 184, 255, 0.16);
   --color-info-text: #7db8ff;
-  --color-purple-bg: #241536;
+  --color-purple-bg: rgba(211, 164, 255, 0.16);
   --color-purple-text: #d3a4ff;
-  --color-warning-bg: #2e2410;
+  --color-warning-bg: rgba(251, 191, 36, 0.16);
   --color-warning-text: #fbbf24;
-  --color-danger-bg: #341417;
+  --color-danger-bg: rgba(248, 113, 113, 0.16);
   --color-danger-text: #f87171;
-  --color-pink-bg: #331525;
+  --color-pink-bg: rgba(244, 114, 182, 0.16);
   --color-pink-text: #f472b6;
+
+  --color-primary-tint: rgba(129, 120, 245, 0.16);
+  --color-primary-tint-strong: rgba(129, 120, 245, 0.24);
 
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
