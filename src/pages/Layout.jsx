@@ -13,6 +13,7 @@ import {
   FaUserCircle,
   FaCheckDouble,
   FaHistory,
+  FaMoneyBillWave,
 } from "react-icons/fa";
 
 export default function Layout() {
@@ -91,6 +92,15 @@ export default function Layout() {
                 <FaHistory />
               </span>{" "}
               Activity History
+            </div>
+          )}
+
+          {isStudioManager && (
+            <div className={getMenuItemClass("/Finance")} onClick={() => navigate("/Finance")}>
+              <span>
+                <FaMoneyBillWave />
+              </span>{" "}
+              Finance
             </div>
           )}
 

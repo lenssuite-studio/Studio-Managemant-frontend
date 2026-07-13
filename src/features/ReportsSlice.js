@@ -16,11 +16,28 @@ export const getReport = createAsyncThunk(
   },
 );
 
+// 🌟 PHASE 5 (financial tracking): monthly revenue/expenses/netProfit trend
+export const getRevenueTrend = createAsyncThunk(
+  "Reports/getRevenueTrend",
+  async (months = 6, thunkAPI) => {
+    try {
+      const response = await API.get("/Studio/Reports/Trend", { params: { months } });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.error || error.message,
+      );
+    }
+  },
+);
+
 const ReportsSlice = createSlice({
   name: "Reports",
   initialState: {
     data: null,
+    trend: [],
     loading: false,
+    trendLoading: false,
     error: null,
   },
   reducers: {},
@@ -36,6 +53,17 @@ const ReportsSlice = createSlice({
       })
       .addCase(getReport.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getRevenueTrend.pending, (state) => {
+        state.trendLoading = true;
+      })
+      .addCase(getRevenueTrend.fulfilled, (state, action) => {
+        state.trendLoading = false;
+        state.trend = action.payload || [];
+      })
+      .addCase(getRevenueTrend.rejected, (state, action) => {
+        state.trendLoading = false;
         state.error = action.payload;
       });
   },
