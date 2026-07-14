@@ -4,32 +4,15 @@ export default function Unauthorized() {
   const navigate = useNavigate();
 
   return (
-    <div style={{
-      display: "flex", 
-      flexDirection: "column", 
-      alignItems: "center", 
-      justifyContent: "center", 
-      height: "100vh", 
-      fontFamily: "sans-serif",
-      backgroundColor: "#f8fafc",
-      color: "#0f172a"
-    }}>
-      <h1 style={{ fontSize: "72px", margin: "0", color: "#ef4444" }}>403</h1>
-      <h2 style={{ fontSize: "24px", marginBottom: "10px" }}>Oggolaansho Ma Lahid!</h2>
-      <p style={{ color: "#64748b", marginBottom: "20px", textAlign: "center", maxWidth: "400px" }}>
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 px-6 text-center dark:bg-slate-950">
+      <h1 className="text-7xl font-bold text-red-500">403</h1>
+      <h2 className="mt-2 text-2xl font-semibold text-slate-900 dark:text-white">Oggolaansho Ma Lahid!</h2>
+      <p className="mt-2 max-w-md text-sm text-slate-500 dark:text-slate-400">
         Boggan waxaa u oggolaan oo kaliya maamulayaasha sare (Superadmin) ee LensSuite.
       </p>
-      <button 
-        onClick={() => navigate(-1)} 
-        style={{
-          padding: "10px 20px",
-          backgroundColor: "#4f46e5",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-          fontWeight: "500"
-        }}
+      <button
+        onClick={() => navigate(-1)}
+        className="mt-6 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 active:translate-y-0"
       >
         ← Dib u Noqo
       </button>
