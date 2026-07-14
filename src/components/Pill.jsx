@@ -68,3 +68,10 @@ export const roleTone = (role) => {
   if (role === "employee") return "slate";
   return "slate";
 };
+
+export const actionTypeTone = (actionType) => {
+  if (actionType === "edit") return "blue";
+  if (actionType === "delete") return "red";
+  if (actionType === "archive") return "amber";
+  return "slate";
+};

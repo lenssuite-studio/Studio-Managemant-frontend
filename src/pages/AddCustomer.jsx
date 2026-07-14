@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import "./AddCustomer.css";
 import { addCustomer } from "../features/CustomerSlice";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import FormSection from "../components/FormSection";
+import { TextField, SelectField } from "../components/FormField";
 
 export default function AddCustomer() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function AddCustomer() {
     fullName: "",
     Phone: "",
     folderName: "",
-    status: "Pending", 
+    status: "Pending",
     customerType: "VIP",
     PhotoType: "FullBody",
     paymentMethod: "Cash",
@@ -50,168 +51,119 @@ export default function AddCustomer() {
   };
 
   return (
-    <div className="lenssuite-main">
-      <div className="breadcrumb">
-        Clients &gt; <span>New Registration</span>
+    <div>
+      <div className="mb-1 text-sm text-slate-400 dark:text-slate-500">
+        Clients <span className="mx-1">›</span>
+        <span className="text-slate-600 dark:text-slate-300">New Registration</span>
       </div>
 
-      <h1 className="form-title">Add New Customer</h1>
-      <p className="form-subtitle">Enter the client details below.</p>
+      <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Add New Customer</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Enter the client details below.</p>
 
-      <form className="customer-form" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-6">
         {/* PERSONAL INFO */}
-        <div className="form-card">
-          <h3 className="card-heading">
-            <span>👤</span> Personal Information
-          </h3>
-
-          <div className="form-grid">
-            <div className="input-group">
-              <label>Full Name *</label>
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Enter full name"
-                required
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Phone Number</label>
-              <input
-                type="text"
-                name="Phone"
-                placeholder="+252..."
-                onChange={handleChange}
-              />
-            </div>
+        <FormSection icon="👤" title="Personal Information">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <TextField
+              label="Full Name"
+              required
+              type="text"
+              name="fullName"
+              placeholder="Enter full name"
+              onChange={handleChange}
+            />
+            <TextField label="Phone Number" type="text" name="Phone" placeholder="+252..." onChange={handleChange} />
           </div>
 
-          <div className="form-grid" style={{ marginTop: "20px" }}>
-            <div className="input-group">
-              <label>Folder Name *</label>
-              <input
-                type="text"
-                name="folderName"
-                placeholder="Folder Name"
-                required
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Number Of Photos</label>
-              <input
-                type="number"
-                name="numberOfPhotos"
-                defaultValue={0}
-                onChange={handleChange}
-              />
-            </div>
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <TextField
+              label="Folder Name"
+              required
+              type="text"
+              name="folderName"
+              placeholder="Folder Name"
+              onChange={handleChange}
+            />
+            <TextField
+              label="Number Of Photos"
+              type="number"
+              name="numberOfPhotos"
+              defaultValue={0}
+              onChange={handleChange}
+            />
           </div>
-        </div>
+        </FormSection>
 
         {/* FINANCIAL */}
-        <div className="form-card">
-          <h3 className="card-heading">
-            <span>💳</span> Financials
-          </h3>
-
-          <div className="form-grid">
-            <div className="input-group">
-              <label>Amount Paid</label>
-              <input
-                type="number"
-                name="amountPaid"
-                placeholder="$0"
-                defaultValue={0}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Remaining Amount</label>
-              <input
-                type="number"
-                name="remainingAmount"
-                placeholder="$0"
-                defaultValue={0}
-                onChange={handleChange}
-              />
-            </div>
+        <FormSection icon="💳" title="Financials">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <TextField
+              label="Amount Paid"
+              type="number"
+              name="amountPaid"
+              placeholder="$0"
+              defaultValue={0}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Remaining Amount"
+              type="number"
+              name="remainingAmount"
+              placeholder="$0"
+              defaultValue={0}
+              onChange={handleChange}
+            />
           </div>
 
-          <div className="input-group" style={{ marginTop: "20px" }}>
-            <label>Customer Type</label>
-            <select
-              className="form-select"
-              name="customerType"
-              value={FromData.customerType}
-              onChange={handleChange}
-            >
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <SelectField label="Customer Type" name="customerType" value={FromData.customerType} onChange={handleChange}>
               <option value="VIP">VIP</option>
               <option value="NORMAL">NORMAL</option>
-            </select>
-          </div>
+            </SelectField>
 
-          <div className="input-group" style={{ marginTop: "20px" }}>
-            <label>Photo Type</label>
-            <select
-              className="form-select"
-              name="PhotoType"
-              value={FromData.PhotoType}
-              onChange={handleChange}
-            >
+            <SelectField label="Photo Type" name="PhotoType" value={FromData.PhotoType} onChange={handleChange}>
               <option value="FullBody">FullBody</option>
               <option value="ID_Card">ID_Card</option>
               <option value="Headshot">Headshot</option>
               <option value="Portrait">Portrait</option>
               <option value="Certificate">Certificate</option>
               <option value="Wedding">Wedding</option>
-            </select>
-          </div>
+            </SelectField>
 
-          <div className="input-group" style={{ marginTop: "20px" }}>
-            <label>Status</label>
-            <select
-              className="form-select"
-              name="status"
-              value={FromData.status} // 🌟 Waa la saxay (FromData.status oo lowercase ah)
-              onChange={handleChange}
-            >
+            <SelectField label="Status" name="status" value={FromData.status} onChange={handleChange}>
               <option value="Pending">Pending</option>
               <option value="Delivered">Delivered</option>
               <option value="Completed">Completed</option>
-            </select>
-          </div>
+            </SelectField>
 
-          <div className="input-group" style={{ marginTop: "20px" }}>
-            <label>Payment Method *</label>
-            <select
-              className="form-select"
+            <SelectField
+              label="Payment Method"
+              required
               name="paymentMethod"
               value={FromData.paymentMethod}
               onChange={handleChange}
-              required
             >
               <option value="Cash">Cash</option>
               <option value="Edahab">Edahab</option>
               <option value="SAAD">SAAD</option>
-            </select>
+            </SelectField>
           </div>
-        </div>
+        </FormSection>
 
         {/* BUTTONS */}
-        <div className="form-actions">
-          <button type="submit" className="btn-submit" disabled={loading}>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-1"
+          >
             {loading ? "Saving..." : "Create Customer"}
           </button>
 
           <button
             type="button"
-            className="btn-cancel"
             onClick={() => navigate("/Dashboard")}
+            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 sm:flex-1"
           >
             Cancel
           </button>

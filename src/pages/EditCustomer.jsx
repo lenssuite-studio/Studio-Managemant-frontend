@@ -3,8 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import API from "../features/axiosInstance";
 import { useDispatch } from "react-redux";
 import { updateCustomer } from "../features/CustomerSlice";
-import "./EditCustomer.css";
 import toast from "react-hot-toast";
+import { TextField, SelectField, TextAreaField } from "../components/FormField";
 
 export default function EditCustomer() {
   const { id } = useParams();
@@ -70,100 +70,60 @@ export default function EditCustomer() {
   };
 
   return (
-    <div className="lenssuite-main edit-customer-container">
-      <h1 className="form-title">Edit Customer</h1>
+    <div className="mx-auto w-full max-w-2xl">
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Edit Customer</h1>
 
-      <form onSubmit={handleSubmit} className="customer-form edit-form-card">
-        
-        <div className="form-group">
-          <label className="form-label">Full Name</label>
-          <input
-            name="fullName"
-            value={formData.fullName}
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900 sm:p-8"
+      >
+        <TextField label="Full Name" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" />
+        <TextField label="Phone Number" name="Phone" value={formData.Phone} onChange={handleChange} placeholder="Phone" />
+        <TextField
+          label="Folder Name"
+          name="folderName"
+          value={formData.folderName}
+          onChange={handleChange}
+          placeholder="Folder Name"
+        />
+
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <TextField
+            label="Number of Photos"
+            type="number"
+            name="numberOfPhotos"
+            value={formData.numberOfPhotos}
             onChange={handleChange}
-            placeholder="Full Name"
-            className="form-input"
+          />
+          <TextField
+            label="Amount Paid ($)"
+            type="number"
+            name="amountPaid"
+            value={formData.amountPaid}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Remaining Amount ($)"
+            type="number"
+            name="remainingAmount"
+            value={formData.remainingAmount}
+            onChange={handleChange}
           />
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Phone Number</label>
-          <input
-            name="Phone"
-            value={formData.Phone}
-            onChange={handleChange}
-            placeholder="Phone"
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Folder Name</label>
-          <input
-            name="folderName"
-            value={formData.folderName}
-            onChange={handleChange}
-            placeholder="Folder Name"
-            className="form-input"
-          />
-        </div>
-
-        <div className="form-group-grid">
-          <div className="form-group">
-            <label className="form-label">Number of Photos</label>
-            <input
-              name="numberOfPhotos"
-              type="number"
-              value={formData.numberOfPhotos}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Amount Paid ($)</label>
-            <input
-              name="amountPaid"
-              type="number"
-              value={formData.amountPaid}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Remaining Amount ($)</label>
-            <input
-              name="remainingAmount"
-              type="number"
-              value={formData.remainingAmount}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">Customer Type</label> {/* 🌟 Talo: Magaca "Status" halkan waxaa loo beddelay Customer Type maadaama uu VIP/NORMAL yahay */}
-          <select
-            name="customerType"
-            value={formData.customerType}
-            onChange={handleChange}
-            className="form-select"
-          >
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {/* 🌟 Talo: Magaca "Status" halkan waxaa loo beddelay Customer Type maadaama uu VIP/NORMAL yahay */}
+          <SelectField label="Customer Type" name="customerType" value={formData.customerType} onChange={handleChange}>
             <option value="VIP">VIP</option>
             <option value="NORMAL">NORMAL</option>
-          </select>
-        </div>
+          </SelectField>
 
-        {/* 🌟 KU DARID: Qaybta doorashada PhotoType ee foomka Edit-ka */}
-        <div className="form-group">
-          <label className="form-label">Photo Type</label>
-          <select
-            name="PhotoType" // Waa xarfo waaweyn sidii nidaamka kale
-            value={formData.PhotoType || "FullBody"} // Haddii uu xog hore waayo wuxuu qaadanayaa FullBody
+          {/* 🌟 KU DARID: Qaybta doorashada PhotoType ee foomka Edit-ka */}
+          <SelectField
+            label="Photo Type"
+            name="PhotoType"
+            value={formData.PhotoType || "FullBody"}
             onChange={handleChange}
-            className="form-select"
           >
             <option value="FullBody">FullBody</option>
             <option value="ID_Card">ID_Card</option>
@@ -171,50 +131,39 @@ export default function EditCustomer() {
             <option value="Portrait">Portrait</option>
             <option value="Certificate">Certificate</option>
             <option value="Wedding">Wedding</option>
-          </select>
-        </div>
+          </SelectField>
 
-        <div className="form-group">
-          <label className="form-label">Status</label> {/* 🌟 Talo: Magaca "Status2" halkan waxaa dib loogu soo celiyay Status */}
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="form-select"
-          >
+          <SelectField label="Status" name="status" value={formData.status} onChange={handleChange}>
             <option value="Pending">Pending</option>
             <option value="Delivered">Delivered</option>
             <option value="Completed">Completed</option>
-          </select>
-        </div>
+          </SelectField>
 
-        <div className="form-group">
-          <label className="form-label">Payment Method</label>
-          <select
+          <SelectField
+            label="Payment Method"
             name="paymentMethod"
             value={formData.paymentMethod || "Cash"}
             onChange={handleChange}
-            className="form-select"
           >
             <option value="Cash">Cash</option>
             <option value="Edahab">Edahab</option>
             <option value="SAAD">SAAD</option>
-          </select>
+          </SelectField>
         </div>
 
-        <div className="form-group">
-          <label className="form-label">Reason for Change (optional)</label>
-          <textarea
-            name="reason"
-            value={formData.reason || ""}
-            onChange={handleChange}
-            className="form-input"
-            placeholder="Why are you requesting this change? (optional)"
-            rows={3}
-          />
-        </div>
+        <TextAreaField
+          label="Reason for Change (optional)"
+          name="reason"
+          value={formData.reason || ""}
+          onChange={handleChange}
+          placeholder="Why are you requesting this change? (optional)"
+          rows={3}
+        />
 
-        <button type="submit" className="btn-submit-customer">
+        <button
+          type="submit"
+          className="mt-1 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 active:translate-y-0"
+        >
           Update Customer
         </button>
       </form>
