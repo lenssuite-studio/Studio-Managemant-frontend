@@ -1,16 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getActivityHistory } from "../features/ActivityHistorySlice";
-import "./AddCustomer.css";
-import "./Dashboard.css";
+import Pill, { actionTypeTone, outcomeTone } from "../components/Pill";
 
 const actionLabels = { create: "Create", edit: "Edit", delete: "Delete", archive: "Archive" };
-const outcomeStyles = {
-  applied: { backgroundColor: "#e6f4ea", color: "#137333" },
-  requested: { backgroundColor: "#fef3c7", color: "#b45309" },
-  approved: { backgroundColor: "#e6f4ea", color: "#137333" },
-  rejected: { backgroundColor: "#fee2e2", color: "#dc2626" },
-};
 
 function formatSnapshot(snapshot) {
   if (!snapshot) return "—";
@@ -28,54 +21,63 @@ export default function ActivityHistory() {
   }, [dispatch]);
 
   return (
-    <div className="lenssuite-main">
-      <div className="breadcrumb">
-        Studio &gt; <span>Activity History</span>
+    <div>
+      <div className="mb-1 text-sm text-slate-400 dark:text-slate-500">
+        Studio <span className="mx-1">›</span>
+        <span className="text-slate-600 dark:text-slate-300">Activity History</span>
       </div>
 
-      <h1 className="form-title">Activity History</h1>
-      <p className="form-subtitle">
+      <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Activity History</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Diiwaanka joogtada ah ee dhammaan isbeddelada order-yada studio-gaaga — cid, waqti, iyo qiyamka hore/dib.
       </p>
 
-      <div className="table-container" style={{ marginTop: "24px" }}>
+      <div className="mt-6 w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
         {!loading && entries.length === 0 ? (
-          <div className="loading-text" style={{ textAlign: "center", padding: "20px" }}>
+          <div className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
             Weli wax activity ah lama helin.
           </div>
         ) : (
-          <table className="lenssuite-table">
+          <table className="w-full min-w-[960px] border-collapse text-left text-sm">
             <thead>
-              <tr>
-                <th>Order</th>
-                <th>Action</th>
-                <th>Outcome</th>
-                <th>User</th>
-                <th>Before</th>
-                <th>After</th>
-                <th>Timestamp</th>
+              <tr className="bg-slate-50 dark:bg-slate-800/60">
+                {["Order", "Action", "Outcome", "User", "Before", "After", "Timestamp"].map((label) => (
+                  <th
+                    key={label}
+                    className="whitespace-nowrap border-b border-slate-200 px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
+                  >
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {entries.map((entry) => (
-                <tr key={entry._id}>
-                  <td className="td-name">
+                <tr
+                  key={entry._id}
+                  className="border-b border-slate-100 transition-colors duration-150 last:border-0 hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/40"
+                >
+                  <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">
                     {entry.customerId?.fullName || "(deleted)"}
                   </td>
-                  <td>
-                    <span className="status-pill" style={{ backgroundColor: "#e8f0fe", color: "#1a73e8" }}>
-                      {actionLabels[entry.action]}
-                    </span>
+                  <td className="px-5 py-4">
+                    <Pill tone={actionTypeTone(entry.action)}>{actionLabels[entry.action]}</Pill>
                   </td>
-                  <td>
-                    <span className="status-pill" style={outcomeStyles[entry.outcome]}>
-                      {entry.outcome}
-                    </span>
+                  <td className="px-5 py-4">
+                    <Pill tone={outcomeTone(entry.outcome)}>{entry.outcome}</Pill>
                   </td>
-                  <td>{entry.userId?.username || "—"}</td>
-                  <td style={{ fontSize: "12px", maxWidth: "220px" }}>{formatSnapshot(entry.before)}</td>
-                  <td style={{ fontSize: "12px", maxWidth: "220px" }}>{formatSnapshot(entry.after)}</td>
-                  <td>{new Date(entry.createdAt).toLocaleString()}</td>
+                  <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                    {entry.userId?.username || "—"}
+                  </td>
+                  <td className="max-w-[220px] px-5 py-4 text-xs text-slate-500 dark:text-slate-400">
+                    {formatSnapshot(entry.before)}
+                  </td>
+                  <td className="max-w-[220px] px-5 py-4 text-xs text-slate-500 dark:text-slate-400">
+                    {formatSnapshot(entry.after)}
+                  </td>
+                  <td className="whitespace-nowrap px-5 py-4 text-slate-600 dark:text-slate-300">
+                    {new Date(entry.createdAt).toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>

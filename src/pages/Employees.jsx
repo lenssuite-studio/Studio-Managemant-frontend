@@ -8,10 +8,15 @@ import {
   deleteEmployee,
 } from "../features/EmployeeSlice";
 import toast from "react-hot-toast";
-import "./AddCustomer.css";
-import "./Dashboard.css";
+import { FaSyncAlt, FaLock, FaLockOpen, FaTrash } from "react-icons/fa";
+import FormSection from "../components/FormSection";
+import { TextField } from "../components/FormField";
+import Pill from "../components/Pill";
 
 const emptyForm = { username: "", email: "", password: "" };
+
+const ACTION_BTN =
+  "flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm";
 
 export default function Employees() {
   const dispatch = useDispatch();
@@ -84,136 +89,133 @@ export default function Employees() {
   };
 
   return (
-    <div className="lenssuite-main">
-      <div className="breadcrumb">
-        Studio &gt; <span>Team &amp; Employees</span>
+    <div>
+      <div className="mb-1 text-sm text-slate-400 dark:text-slate-500">
+        Studio <span className="mx-1">›</span>
+        <span className="text-slate-600 dark:text-slate-300">Team &amp; Employees</span>
       </div>
 
-      <h1 className="form-title">Team &amp; Employees</h1>
-      <p className="form-subtitle">
-        Ku dar oo maamul shaqaalaha (employees) ee studio-gaaga. Shaqaaluhu
-        waxay maamuli karaan macaamiisha, laakiin ma arki karaan Reports ama
-        maamulka shaqaalaha.
+      <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Team &amp; Employees</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Ku dar oo maamul shaqaalaha (employees) ee studio-gaaga. Shaqaaluhu waxay maamuli karaan macaamiisha,
+        laakiin ma arki karaan Reports ama maamulka shaqaalaha.
       </p>
 
-      <form className="customer-form" onSubmit={handleSubmit}>
-        <div className="form-card">
-          <h3 className="card-heading">
-            <span>👤</span> {editingId ? "Edit Employee" : "Add Employee"}
-          </h3>
-
-          <div className="form-grid">
-            <div className="input-group">
-              <label>Full Name *</label>
-              <input
-                type="text"
-                name="username"
-                placeholder="Enter employee's full name"
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Email *</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="employee@example.com"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
+      <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-6">
+        <FormSection icon="👤" title={editingId ? "Edit Employee" : "Add Employee"}>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <TextField
+              label="Full Name"
+              required
+              type="text"
+              name="username"
+              placeholder="Enter employee's full name"
+              value={formData.username}
+              onChange={handleChange}
+            />
+            <TextField
+              label="Email"
+              required
+              type="email"
+              name="email"
+              placeholder="employee@example.com"
+              value={formData.email}
+              onChange={handleChange}
+            />
           </div>
 
           {!editingId && (
-            <div className="input-group" style={{ marginTop: "20px" }}>
-              <label>Temporary Password *</label>
-              <input
+            <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <TextField
+                label="Temporary Password"
+                required
                 type="password"
                 name="password"
                 placeholder="Set a starting password"
                 value={formData.password}
                 onChange={handleChange}
-                required
               />
             </div>
           )}
-        </div>
+        </FormSection>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-submit" disabled={loading}>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="submit"
+            disabled={loading}
+            className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none sm:px-8"
+          >
             {loading ? "Saving..." : editingId ? "Save Changes" : "Add Employee"}
           </button>
           {editingId && (
-            <button type="button" className="btn-cancel" onClick={cancelEdit}>
+            <button
+              type="button"
+              onClick={cancelEdit}
+              className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 sm:flex-none sm:px-8"
+            >
               Cancel
             </button>
           )}
         </div>
       </form>
 
-      <div className="table-container" style={{ marginTop: "32px" }}>
+      <div className="mt-8 w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
         {!loading && employees.length === 0 ? (
-          <div
-            className="loading-text"
-            style={{ textAlign: "center", padding: "20px" }}
-          >
+          <div className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
             Wali ma jiro shaqaale la daray.
           </div>
         ) : (
-          <table className="lenssuite-table">
+          <table className="w-full min-w-[700px] border-collapse text-left text-sm">
             <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Joined</th>
-                <th>Actions</th>
+              <tr className="bg-slate-50 dark:bg-slate-800/60">
+                {["Full Name", "Email", "Status", "Joined", "Actions"].map((label) => (
+                  <th
+                    key={label}
+                    className="whitespace-nowrap border-b border-slate-200 px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
+                  >
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {employees.map((emp) => (
-                <tr key={emp._id}>
-                  <td className="td-name">{emp.username}</td>
-                  <td>{emp.email}</td>
-                  <td>
-                    <span
-                      className="status-pill"
-                      style={{
-                        backgroundColor: emp.isActive ? "#e6f4ea" : "#fef7e0",
-                        color: emp.isActive ? "#137333" : "#b06000",
-                      }}
-                    >
-                      {emp.isActive ? "Active" : "Inactive"}
-                    </span>
+                <tr
+                  key={emp._id}
+                  className="border-b border-slate-100 transition-colors duration-150 last:border-0 hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/40"
+                >
+                  <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">{emp.username}</td>
+                  <td className="px-5 py-4 text-slate-600 dark:text-slate-300">{emp.email}</td>
+                  <td className="px-5 py-4">
+                    <Pill tone={emp.isActive ? "green" : "amber"}>{emp.isActive ? "Active" : "Inactive"}</Pill>
                   </td>
-                  <td>{new Date(emp.createdAt).toLocaleDateString()}</td>
-                  <td>
-                    <button
-                      onClick={() => startEdit(emp)}
-                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
-                      title="Edit Employee"
-                    >
-                      🔄️
-                    </button>
-                    <button
-                      onClick={() => handleToggle(emp)}
-                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
-                      title={emp.isActive ? "Disable Employee" : "Enable Employee"}
-                    >
-                      {emp.isActive ? "🔒" : "🔓"}
-                    </button>
-                    <button
-                      className="btn-delete-customer"
-                      onClick={() => handleDelete(emp)}
-                      style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
-                      title="Delete Employee"
-                    >
-                      🗑️
-                    </button>
+                  <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                    {new Date(emp.createdAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => startEdit(emp)}
+                        title="Edit Employee"
+                        className={`${ACTION_BTN} hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-indigo-500/10`}
+                      >
+                        <FaSyncAlt size={13} />
+                      </button>
+                      <button
+                        onClick={() => handleToggle(emp)}
+                        title={emp.isActive ? "Disable Employee" : "Enable Employee"}
+                        className={`${ACTION_BTN} hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-500/10`}
+                      >
+                        {emp.isActive ? <FaLock size={13} /> : <FaLockOpen size={13} />}
+                      </button>
+                      <button
+                        onClick={() => handleDelete(emp)}
+                        title="Delete Employee"
+                        className={`${ACTION_BTN} hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10`}
+                      >
+                        <FaTrash size={13} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

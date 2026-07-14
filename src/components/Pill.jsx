@@ -70,8 +70,16 @@ export const roleTone = (role) => {
 };
 
 export const actionTypeTone = (actionType) => {
+  if (actionType === "create") return "green";
   if (actionType === "edit") return "blue";
   if (actionType === "delete") return "red";
   if (actionType === "archive") return "amber";
+  return "slate";
+};
+
+export const outcomeTone = (outcome) => {
+  if (outcome === "applied" || outcome === "approved") return "green";
+  if (outcome === "requested") return "amber";
+  if (outcome === "rejected") return "red";
   return "slate";
 };
