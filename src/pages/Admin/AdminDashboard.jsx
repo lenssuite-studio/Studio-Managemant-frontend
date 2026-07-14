@@ -1,7 +1,8 @@
-import "../../pages/Admin/AdminLayout.css";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminStats, getAllStudios } from "../../features/AdminSlice";
+import StatCard from "../../components/StatCard";
+import Pill from "../../components/Pill";
 
 export default function AdminDashboard() {
   const dispatch = useDispatch();
@@ -22,151 +23,71 @@ export default function AdminDashboard() {
   }, [dispatch]);
 
   if (loading) {
-    return (
-      <div
-        style={{ fontFamily: "sans-serif", color: "#64748b", padding: "20px" }}
-      >
-        Waa la soo kicinayaa xogta...
-      </div>
-    );
+    return <div className="p-5 text-sm text-slate-500 dark:text-slate-400">Waa la soo kicinayaa xogta...</div>;
   }
 
   return (
-    <div className="admin-dashboard-container">
+    <div>
       {/* 🚀 PLATFORM OVERVIEW HEADERS */}
-      <div className="admin-dashboard-header">
-        <h1 className="admin-dashboard-title">Platform Overview</h1>
-        <p className="admin-dashboard-subtitle">
-          Manage your photography ecosystem, monitor performance metrics, and
-          oversee studio health from a centralized command center.
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Platform Overview</h1>
+        <p className="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+          Manage your photography ecosystem, monitor performance metrics, and oversee studio health from a
+          centralized command center.
         </p>
       </div>
+
       {/* 📊 METRICS GRID */}
-      <div className="admin-metrics-grid">
-        {/* 🏢 CARD-KA KOOWAAD: TOTAL STUDIOS */}
-        <div className="admin-metric-card">
-          <div className="card-top-row">
-            <div className="card-icon-wrapper">
-              <span>🏢</span>
-            </div>
-            <div className="card-trend-badge">📈 +12%</div>
-          </div>
-          <div className="card-info">
-            <span className="card-label">Total Studios</span>
-            <h2 className="card-number">{totalStudios || 0}</h2>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard icon="🏢" tone="indigo" label="Total Studios" value={totalStudios || 0} />
+        <StatCard icon="👥" tone="blue" label="Total System Customers" value={totalCustomers || 0} />
+        <StatCard icon="🟢" tone="green" label="Active Studios" value={activeStudios || 0} valueClassName="text-emerald-500!" />
+        <StatCard icon="🔴" tone="red" label="Inactive Studios" value={inactiveStudios || 0} valueClassName="text-red-500!" />
+      </div>
 
-        {/* 👥 CARD-KA LABAAD: TOTAL CUSTOMERS */}
-        <div className="admin-metric-card">
-          <div className="card-top-row">
-            <div
-              className="card-icon-wrapper"
-              style={{ backgroundColor: "#e0f2fe" }}
-            >
-              <span style={{ fontSize: "20px" }}>👥</span>
-            </div>
-            <div
-              className="card-trend-badge"
-              style={{ backgroundColor: "#e0f2fe", color: "#0369a1" }}
-            >
-              📈 +8%
-            </div>
-          </div>
-          <div className="card-info">
-            <span className="card-label">Total System Customers</span>
-            <h2 className="card-number">{totalCustomers || 0}</h2>
-          </div>
-        </div>
+      {/* 📋 SHAXDA MAAMULKA XARUMAHA (STUDIO MANAGEMENT TABLE) */}
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+        <h2 className="text-base font-semibold text-slate-900 dark:text-white">Registered Studios</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          A complete list of all photography studios operating on the platform.
+        </p>
 
-        {/* 🟢 CARD-KA SADDEXAAD: ACTIVE STUDIOS */}
-        <div className="admin-metric-card">
-          <div className="card-top-row">
-            <div
-              className="card-icon-wrapper"
-              style={{ backgroundColor: "#dcfce7" }}
-            >
-              <span style={{ fontSize: "20px" }}>🟢</span>
-            </div>
-            <div
-              className="card-trend-badge"
-              style={{ backgroundColor: "#dcfce7", color: "#15803d" }}
-            >
-              Live
-            </div>
-          </div>
-          <div className="card-info">
-            <span className="card-label">Active Studios</span>
-            <h2 className="card-number" style={{ color: "#16a34a" }}>
-              {activeStudios || 0}
-            </h2>
-          </div>
-        </div>
-
-        {/* 🔴 CARD-KA AFRAAD: INACTIVE STUDIOS */}
-        <div className="admin-metric-card">
-          <div className="card-top-row">
-            <div
-              className="card-icon-wrapper"
-              style={{ backgroundColor: "#fee2e2" }}
-            >
-              <span style={{ fontSize: "20px" }}>🔴</span>
-            </div>
-            <div
-              className="card-trend-badge"
-              style={{ backgroundColor: "#fee2e2", color: "#b91c1c" }}
-            >
-              Paused
-            </div>
-          </div>
-          <div className="card-info">
-            <span className="card-label">Inactive Studios</span>
-            <h2 className="card-number" style={{ color: "#dc2626" }}>
-              {inactiveStudios || 0}
-            </h2>
-          </div>
-        </div>
-      </div>{" "}
-      {/* <-- Halkan ayuu hadda xiridda Grid-ku si sax ah ugu jaraa */}
-      {/* 📋 SHAXDA MAAMULKA XARUMAHA (STUDIO MANAGEMENT TABLE) - BANAAKAA LA SOO DHIGAY */}
-      <div className="admin-table-section">
-        <div className="table-header-container">
-          <h2 className="table-title">Registered Studios</h2>
-          <p className="table-subtitle">
-            A complete list of all photography studios operating on the
-            platform.
-          </p>
-        </div>
-
-        <div className="table-responsive-wrapper">
-          <table className="admin-studios-table">
+        <div className="mt-5 overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
+          <table className="w-full min-w-[600px] border-collapse text-left text-sm">
             <thead>
-              <tr>
-                <th>Studio Name</th>
-                <th>Email Address</th>
-                <th>Joined Date</th>
-                <th>Status</th>
+              <tr className="bg-slate-50 dark:bg-slate-800/60">
+                {["Studio Name", "Email Address", "Joined Date", "Status"].map((label) => (
+                  <th
+                    key={label}
+                    className="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
+                  >
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {studios.length > 0 ? (
                 studios.map((studio) => (
-                  <tr key={studio._id}>
-                    <td className="studio-name-cell">{studio.username}</td>
-                    <td className="studio-email-cell">{studio.email}</td>
-                    <td>{new Date(studio.createdAt).toLocaleDateString()}</td>
-                    <td>
-                      <span
-                        className={`status-badge ${studio.isActive ? "status-active" : "status-inactive"}`}
-                      >
+                  <tr
+                    key={studio._id}
+                    className="border-b border-slate-100 transition-colors duration-150 last:border-0 hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/40"
+                  >
+                    <td className="px-5 py-3.5 font-semibold text-slate-900 dark:text-white">{studio.username}</td>
+                    <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">{studio.email}</td>
+                    <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">
+                      {new Date(studio.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <Pill tone={studio.isActive ? "green" : "amber"}>
                         {studio.isActive ? "Active" : "Inactive"}
-                      </span>
+                      </Pill>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="table-empty-state">
+                  <td colSpan="4" className="px-5 py-10 text-center italic text-slate-400 dark:text-slate-500">
                     Wax studio ah oo diiwaangashan wali lama helin.
                   </td>
                 </tr>

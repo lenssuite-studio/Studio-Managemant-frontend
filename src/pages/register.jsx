@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Register.css";
 import { RegisterStudio } from "../features/authSlice";
-
 import { useSelector, useDispatch } from "react-redux";
+import AuthShell from "../components/AuthShell";
+import { TextField } from "../components/FormField";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -27,75 +27,56 @@ export default function Register() {
   };
 
   return (
-    <div className="Container">
-      <div className="Content-login">
-        <div className="content-Right">
-          <div className="right-conten">
-            <h2 className="Title-Right">
-              <span>📸</span>LensSuite Admin
-            </h2>
-            <h1 className="subTitile">Empower your photography business.</h1>
+    <AuthShell
+      heading="Empower your photography business."
+      description="The all-in-one workspace for modern photographers. Manage your client relationships, organize high-res folders, and handle your finances in a single, beautiful interface."
+    >
+      <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Create Studio Account</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        Please enter your details to access your studio.
+      </p>
 
-            <p className="subContent">
-              The all-in-one workspace for modern photographers. Manage your
-              client relationships, organize high-res folders, and handle your
-              finances in a single, beautiful interface.
-            </p>
-          </div>
-        </div>
+      <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
+        <TextField
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <TextField
+          type="email"
+          placeholder="example@gmail.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <TextField
+          type="password"
+          placeholder="password......"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-        <div className="content-Left">
-          <div className="Form-login">
-            <div className="Header-top">
-              <h1 className="title-left"> Create Studio Account </h1>
-              <p className="left-content">
-                Please enter your details to access your studio.
-              </p>
-            </div>
-            <div className="From-container">
-              <form className="from-item" onSubmit={handleSubmit}>
-                <input
-                  className="input"
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-                <input
-                  className="input"
-                  type="email"
-                  placeholder="example@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+        {successMessage && <p className="text-sm font-medium text-emerald-500">{successMessage}</p>}
+        {error && <p className="text-sm font-medium text-red-500">{error}</p>}
 
-                <input
-                  className="input"
-                  type="password"
-                  placeholder="password......"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+        <button
+          type="submit"
+          disabled={loading}
+          className="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {loading ? "Loading....." : "Register Studio"}
+        </button>
+      </form>
 
-                {successMessage && <p className="success-text">{successMessage}</p>}
-                {error && <p className="error-text">{error}</p>}
-                <button className="from-button" disabled={loading}>
-                  {loading ? "Loading....." : "Register Studio"}
-                </button>
-              </form>
-              <p className="register-text">
-                account ma leedahay?{" "}
-                <Link to="/" className="register-link">
-                  Login
-                </Link>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+        account ma leedahay?{" "}
+        <Link to="/" className="font-semibold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400">
+          Login
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
