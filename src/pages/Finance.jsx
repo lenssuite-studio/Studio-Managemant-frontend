@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getReport, getRevenueTrend } from "../features/ReportsSlice";
 import { getExpenses, addExpense, deleteExpense } from "../features/ExpensesSlice";
-import { getPeriodRange, PERIOD_LABELS } from "../utils/reportPeriods";
+import { getPeriodRange } from "../utils/reportPeriods";
 import FinanceCharts from "../components/FinanceCharts";
+import StatCard from "../components/StatCard";
+import PeriodSelector from "../components/PeriodSelector";
+import Pill from "../components/Pill";
 import toast from "react-hot-toast";
-import "./AddCustomer.css";
-import "./Dashboard.css";
-import "./report.css";
+import { FaTrash, FaPlus, FaReceipt } from "react-icons/fa";
 
 const EXPENSE_CATEGORIES = ["Rent", "Equipment", "Supplies", "Utilities", "Salaries", "Marketing", "Other"];
 
@@ -17,6 +18,9 @@ const emptyExpenseForm = {
   amount: "",
   date: new Date().toISOString().slice(0, 10),
 };
+
+const INPUT_CLASS =
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none transition-colors duration-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200";
 
 export default function Finance() {
   const dispatch = useDispatch();
@@ -97,97 +101,57 @@ export default function Finance() {
   const netProfit = report?.netProfit ?? income - totalExpenses;
 
   return (
-    <div className="lenssuite-main reports-container">
-      <div className="dashboard-header-row" style={{ marginBottom: "20px" }}>
-        <div>
-          <h1 className="form-title" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span>💰</span> Financial Tracking
-          </h1>
-          <p className="form-subtitle">
-            Dakhliga, kharashaadka, iyo faa'iidada saafiga ah (Net Profit) ee studio-gaaga.
-          </p>
-        </div>
+    <div>
+      <div className="mb-6">
+        <h1 className="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          <span>💰</span> Financial Tracking
+        </h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          Dakhliga, kharashaadka, iyo faa'iidada saafiga ah (Net Profit) ee studio-gaaga.
+        </p>
       </div>
 
       {/* PERIOD SELECTOR */}
-      <div
-        className="form-card"
-        style={{ padding: "16px 20px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: "12px" }}
-      >
-        {Object.keys(PERIOD_LABELS).map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setPeriod(key)}
-            className={period === key ? "btn-submit" : "btn-cancel"}
-            style={{ padding: "8px 16px" }}
-          >
-            {PERIOD_LABELS[key]}
-          </button>
-        ))}
-
-        {period === "custom" && (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "8px" }}>
-            <input type="date" value={customFrom} onChange={(e) => setCustomFrom(e.target.value)} className="form-input" />
-            <span>—</span>
-            <input type="date" value={customTo} onChange={(e) => setCustomTo(e.target.value)} className="form-input" />
-            <button type="button" className="btn-submit" onClick={handleApplyCustom}>
-              Apply
-            </button>
-          </div>
-        )}
-      </div>
+      <PeriodSelector
+        period={period}
+        setPeriod={setPeriod}
+        customFrom={customFrom}
+        setCustomFrom={setCustomFrom}
+        customTo={customTo}
+        setCustomTo={setCustomTo}
+        onApplyCustom={handleApplyCustom}
+      />
 
       {loading && (
-        <div className="loading-wrapper" style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
-          <div className="loading-text" style={{ fontSize: "16px", color: "#64748b" }}>
-            🔄 Xogta maaliyadda ayaa la soo kicinayaa...
-          </div>
+        <div className="flex justify-center py-6 text-sm text-slate-500 dark:text-slate-400">
+          🔄 Xogta maaliyadda ayaa la soo kicinayaa...
         </div>
       )}
 
       {/* SUMMARY CARDS: Income / Expenses / Net Profit */}
-      <div className="reports-stats-grid" style={{ marginTop: "24px" }}>
-        <div className="report-card income">
-          <div className="card-icon" style={{ background: "#e6f4ea", color: "#137333" }}>💰</div>
-          <div className="card-info">
-            <span className="card-label">Income</span>
-            <h2 className="card-value">${income.toLocaleString()}</h2>
-          </div>
-        </div>
-
-        <div className="report-card debt">
-          <div className="card-icon" style={{ background: "#fee2e2", color: "#dc2626" }}>💸</div>
-          <div className="card-info">
-            <span className="card-label">Expenses</span>
-            <h2 className="card-value" style={{ color: "#dc2626" }}>${totalExpenses.toLocaleString()}</h2>
-          </div>
-        </div>
-
-        <div className="report-card users">
-          <div className="card-icon" style={{ background: netProfit >= 0 ? "#e6f4ea" : "#fee2e2", color: netProfit >= 0 ? "#137333" : "#dc2626" }}>
-            📈
-          </div>
-          <div className="card-info">
-            <span className="card-label">Net Profit</span>
-            <h2 className="card-value" style={{ color: netProfit >= 0 ? "#137333" : "#dc2626" }}>
-              ${netProfit.toLocaleString()}
-            </h2>
-          </div>
-        </div>
+      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
+        <StatCard icon="💰" tone="green" label="Income" value={`$${income.toLocaleString()}`} />
+        <StatCard icon="💸" tone="red" label="Expenses" value={`$${totalExpenses.toLocaleString()}`} valueClassName="text-red-500!" />
+        <StatCard
+          icon="📈"
+          tone={netProfit >= 0 ? "green" : "red"}
+          label="Net Profit"
+          value={`$${netProfit.toLocaleString()}`}
+          valueClassName={netProfit >= 0 ? "text-emerald-500!" : "text-red-500!"}
+        />
       </div>
 
       {/* PAYMENT METHOD BREAKDOWN */}
-      <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
-        <h3 style={{ marginBottom: "16px", color: "#1e293b", fontSize: "16px" }}>💳 Payment Method Breakdown</h3>
-        <div className="segment-list" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+        <h3 className="mb-4 text-base font-semibold text-slate-900 dark:text-white">💳 Payment Method Breakdown</h3>
+        <div className="flex flex-col gap-2.5">
           {!report?.paymentBreakdown || report.paymentBreakdown.length === 0 ? (
-            <span style={{ color: "#64748b", fontSize: "14px" }}>Wax xog ah lama helin muddadan.</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">Wax xog ah lama helin muddadan.</span>
           ) : (
             report.paymentBreakdown.map((p) => (
-              <div key={p.paymentMethod} style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
-                <span style={{ color: "#64748b" }}>{p.paymentMethod}</span>
-                <span style={{ fontWeight: "600", color: "#1e293b" }}>
+              <div key={p.paymentMethod} className="flex items-center justify-between text-sm">
+                <span className="text-slate-500 dark:text-slate-400">{p.paymentMethod}</span>
+                <span className="font-semibold text-slate-900 dark:text-white">
                   {p.count} orders — ${p.totalPaid.toLocaleString()}
                 </span>
               </div>
@@ -197,87 +161,120 @@ export default function Finance() {
       </div>
 
       {/* CHARTS */}
-      <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
         <FinanceCharts trend={trend} currentPeriod={{ income, expenses: totalExpenses, netProfit }} />
       </div>
 
       {/* ADD EXPENSE */}
-      <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
-        <h3 style={{ marginBottom: "16px", color: "#1e293b", fontSize: "16px" }}>➕ Add Expense</h3>
-        <form onSubmit={handleAddExpense} className="form-grid">
-          <div className="input-group">
-            <label>Category</label>
-            <select name="category" value={formData.category} onChange={handleFormChange} className="form-select">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+        <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-white">
+          <FaPlus size={13} /> Add Expense
+        </h3>
+        <form onSubmit={handleAddExpense} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Category</label>
+            <select name="category" value={formData.category} onChange={handleFormChange} className={INPUT_CLASS}>
               {EXPENSE_CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </div>
-          <div className="input-group">
-            <label>Amount ($) *</label>
-            <input type="number" name="amount" value={formData.amount} onChange={handleFormChange} placeholder="$0" required />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Amount ($) *</label>
+            <input
+              type="number"
+              name="amount"
+              value={formData.amount}
+              onChange={handleFormChange}
+              placeholder="$0"
+              required
+              className={INPUT_CLASS}
+            />
           </div>
-          <div className="input-group">
-            <label>Date</label>
-            <input type="date" name="date" value={formData.date} onChange={handleFormChange} />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Date</label>
+            <input type="date" name="date" value={formData.date} onChange={handleFormChange} className={INPUT_CLASS} />
           </div>
-          <div className="input-group">
-            <label>Description</label>
-            <input type="text" name="description" value={formData.description} onChange={handleFormChange} placeholder="Optional note" />
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Description</label>
+            <input
+              type="text"
+              name="description"
+              value={formData.description}
+              onChange={handleFormChange}
+              placeholder="Optional note"
+              className={INPUT_CLASS}
+            />
           </div>
-          <div className="form-actions" style={{ gridColumn: "1 / -1" }}>
-            <button type="submit" className="btn-submit">Add Expense</button>
+          <div className="sm:col-span-2 lg:col-span-4">
+            <button
+              type="submit"
+              className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 active:translate-y-0"
+            >
+              Add Expense
+            </button>
           </div>
         </form>
       </div>
 
       {/* EXPENSE LIST */}
-      <div className="form-card" style={{ marginTop: "24px", padding: "20px" }}>
-        <h3 style={{ marginBottom: "16px", color: "#1e293b", fontSize: "16px" }}>🧾 Expenses (This Period)</h3>
-        <div className="table-container">
-          {!expensesLoading && expenses.length === 0 ? (
-            <div className="loading-text" style={{ textAlign: "center", padding: "16px" }}>
-              Wax kharash ah lama diiwaan gelin muddadan.
-            </div>
-          ) : (
-            <table className="lenssuite-table">
+      <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+        <h3 className="mb-4 flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-white">
+          <FaReceipt size={13} /> Expenses (This Period)
+        </h3>
+        {!expensesLoading && expenses.length === 0 ? (
+          <div className="py-6 text-center text-sm text-slate-500 dark:text-slate-400">
+            Wax kharash ah lama diiwaan gelin muddadan.
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-slate-800">
+            <table className="w-full min-w-[700px] border-collapse text-left text-sm">
               <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Category</th>
-                  <th>Description</th>
-                  <th>Amount</th>
-                  <th>Added By</th>
-                  <th>Actions</th>
+                <tr className="bg-slate-50 dark:bg-slate-800/60">
+                  {["Date", "Category", "Description", "Amount", "Added By", "Actions"].map((label) => (
+                    <th
+                      key={label}
+                      className="whitespace-nowrap border-b border-slate-200 px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
+                    >
+                      {label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {expenses.map((expense) => (
-                  <tr key={expense._id}>
-                    <td>{new Date(expense.date).toLocaleDateString()}</td>
-                    <td>
-                      <span className="status-pill" style={{ backgroundColor: "#fee2e2", color: "#dc2626" }}>
-                        {expense.category}
-                      </span>
+                  <tr
+                    key={expense._id}
+                    className="border-b border-slate-100 transition-colors duration-150 last:border-0 hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/40"
+                  >
+                    <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">
+                      {new Date(expense.date).toLocaleDateString()}
                     </td>
-                    <td>{expense.description || "—"}</td>
-                    <td className="td-remaining" style={{ color: "#dc2626" }}>${expense.amount.toLocaleString()}</td>
-                    <td>{expense.createdBy?.username || "—"}</td>
-                    <td>
+                    <td className="px-5 py-3.5">
+                      <Pill tone="red">{expense.category}</Pill>
+                    </td>
+                    <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">{expense.description || "—"}</td>
+                    <td className="px-5 py-3.5 font-semibold text-red-500">${expense.amount.toLocaleString()}</td>
+                    <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">
+                      {expense.createdBy?.username || "—"}
+                    </td>
+                    <td className="px-5 py-3.5">
                       <button
                         onClick={() => handleDeleteExpense(expense)}
-                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "5px 10px" }}
                         title="Tirtir Kharashka"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:bg-red-50 hover:text-red-500 hover:shadow-sm dark:hover:bg-red-500/10"
                       >
-                        🗑️
+                        <FaTrash size={13} />
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import "./Dashboard.css"; // Waxaad dib u isticmaali kartaa CSS-kii Dashboard-ka maadaama ay isku design yihiin
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomer, deleteCustomer } from "../features/CustomerSlice";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { FaSearch, FaTrash, FaArrowLeft } from "react-icons/fa";
+import Pill, { statusTone, customerTypeTone, photoTypeTone, paymentMethodTone } from "../components/Pill";
+
+const ACTION_BTN =
+  "flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-200 enabled:hover:-translate-y-0.5 enabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40";
 
 export default function Archive() {
   const navigate = useNavigate();
@@ -43,9 +47,9 @@ export default function Archive() {
       return (
         customer.fullName.toLowerCase().includes(term) ||
         (customer.Phone && customer.Phone.toLowerCase().includes(term)) ||
-        customer.folderName.toLowerCase().includes(term) || 
-        customer.status.toLowerCase().includes(term)  ||
-        customer.customerType.toLowerCase().includes(term)  
+        customer.folderName.toLowerCase().includes(term) ||
+        customer.status.toLowerCase().includes(term) ||
+        customer.customerType.toLowerCase().includes(term)
       );
     }) || [];
 
@@ -53,157 +57,144 @@ export default function Archive() {
     dispatch(getCustomer());
   }, [dispatch]);
 
-  const getStatusStyle = (status) => {
-    if (status === "Pending") return { backgroundColor: "#e6f4ea", color: "#137333" };
-    if (status === "Delivered") return { backgroundColor: "#e8f0fe", color: "#1a73e8" };
-    if (status === "Completed") return { backgroundColor: "#e8f0fe", color: "#d71ae8" };
-    return { backgroundColor: "#fef7e0", color: "#b06000" };
-  };
-
-  const getPaymentMethodStyle = (paymentMethod) => {
-    if (paymentMethod === "Cash") return { backgroundColor: "#e6f4ea", color: "#137333" };
-    if (paymentMethod === "Edahab") return { backgroundColor: "#ffedd5", color: "#c2410c" };
-    if (paymentMethod === "SAAD") return { backgroundColor: "#e0e7ff", color: "#4338ca" };
-    return { backgroundColor: "#f1f5f9", color: "#475569" };
-  };
-
   return (
     <>
       {/* HEADER-KA BOGGA ARCHIVE */}
-      <div className="dashboard-header-row">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="form-title">📂 Kaydka Macaamiisha (Archive)</h1>
-          <p className="form-subtitle">
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            📂 Kaydka Macaamiisha (Archive)
+          </h1>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Halkan waxaad ku guda jirtaa khaanadda kaydka ee macaamiishii hore ee shaqadoodu dhammaatay.
           </p>
-          <div className="search-wrapper">
-            <span className="search-icon">🔍</span>
+          <div className="relative mt-4 max-w-md">
+            <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Ka raadi kaydka magac, telefoon ama folder..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
+              className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:ring-indigo-500/20"
             />
           </div>
         </div>
 
         {/* Badhan dib kuugu celinaya Dashboard-ka weyn */}
         <button
-          className="btn-add-customer"
           onClick={() => navigate("/Dashboard")}
-          style={{ backgroundColor: "#1a73e8" }}
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/20 active:translate-y-0"
         >
-          ⬅️ Dib u Noqo
+          <FaArrowLeft size={12} /> Dib u Noqo
         </button>
       </div>
 
       {/* MIISKA XOGTA ARCHIVE-KA */}
-      <div className="table-container">
+      <div className="w-full overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
         {!loading && archivedCustomers.length === 0 ? (
-          <div
-            className="loading-text"
-            style={{ textAlign: "center", padding: "20px" }}
-          >
+          <div className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400">
             {searchTerm
               ? `Ma jiro macmiil kaydsan oo la mida: "${searchTerm}"`
               : "Khaanadda kaydku hadda waa maran tahay."}
           </div>
         ) : (
-          <table className="lenssuite-table">
+          <table className="w-full min-w-[1080px] border-collapse text-left text-sm">
             <thead>
-              <tr>
-                <th>Full Name</th>
-                <th>Phone Number</th>
-                <th>Folder Name</th>
-                <th>Time</th>
-                <th>Photos</th>
-                <th>Amount Paid</th>
-                <th>Remaining</th>
-                <th>Status</th>
-                <th>customerType</th>
-                <th>PhotoType</th>
-                <th>Payment Method</th>
-                <th>Actions</th>
+              <tr className="bg-slate-50 dark:bg-slate-800/60">
+                {[
+                  "Full Name",
+                  "Phone Number",
+                  "Folder Name",
+                  "Time",
+                  "Photos",
+                  "Amount Paid",
+                  "Remaining",
+                  "Status",
+                  "customerType",
+                  "PhotoType",
+                  "Payment Method",
+                  "Actions",
+                ].map((label) => (
+                  <th
+                    key={label}
+                    className="whitespace-nowrap border-b border-slate-200 px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
+                  >
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {Array.isArray(archivedCustomers) &&
               archivedCustomers.length > 0 ? (
                 archivedCustomers.map((customer) => (
-                  <tr key={customer._id}>
-                    <td className="td-name">{customer.fullName}</td>
-                    <td>{customer.Phone || "---"}</td>
-                    <td>
-                      <code className="folder-badge">{customer.folderName}</code>
+                  <tr
+                    key={customer._id}
+                    className="border-b border-slate-100 transition-colors duration-150 last:border-0 hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/40"
+                  >
+                    <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">
+                      {customer.fullName}
                     </td>
-                    <td>{new Date(customer.createdAt).toLocaleDateString()}</td>
-
-                    <td>{customer.numberOfPhotos}</td>
-                    <td className="td-paid">${customer.amountPaid}</td>
+                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                      {customer.Phone || "---"}
+                    </td>
+                    <td className="px-5 py-4">
+                      <code className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                        {customer.folderName}
+                      </code>
+                    </td>
+                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                      {new Date(customer.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+                      {customer.numberOfPhotos}
+                    </td>
+                    <td className="px-5 py-4 font-medium text-slate-900 dark:text-white">
+                      ${customer.amountPaid}
+                    </td>
                     <td
-                      className="td-remaining"
-                      style={{
-                        color: customer.remainingAmount > 0 ? "#ef4444" : "#10b981",
-                      }}
+                      className={`px-5 py-4 font-semibold ${
+                        customer.remainingAmount > 0 ? "text-red-500" : "text-emerald-500"
+                      }`}
                     >
                       ${customer.remainingAmount}
                     </td>
-                    <td>
-                      <span
-                        className="status-pill"
-                        style={getStatusStyle(customer.status)}
-                      >
-                        {customer.status}
-                      </span>
-                      {customer.pendingChange && (
-                        <span
-                          className="status-pill"
-                          style={{ backgroundColor: "#fef3c7", color: "#b45309", marginLeft: "6px" }}
-                          title="Isbeddel ayaa sugaya ansixinta maamulaha"
-                        >
-                          ⏳ Pending
-                        </span>
-                      )}
+                    <td className="px-5 py-4">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Pill tone={statusTone(customer.status)}>{customer.status}</Pill>
+                        {customer.pendingChange && (
+                          <Pill tone="amber" title="Isbeddel ayaa sugaya ansixinta maamulaha">
+                            ⏳ Pending
+                          </Pill>
+                        )}
+                      </div>
                     </td>
-                    <td>
-                      <span className="status-pill" style={{ backgroundColor: "#e8f0fe", color: "#1a73e8" }}>
-                        {customer.customerType}
-                      </span>
+                    <td className="px-5 py-4">
+                      <Pill tone={customerTypeTone(customer.customerType)}>{customer.customerType}</Pill>
                     </td>
-                    <td>
-                      <span className="status-pill" style={{ backgroundColor: "#e8f0fe", color: "#1a73e8" }}>
-                        {customer.PhotoType}
-                      </span>
+                    <td className="px-5 py-4">
+                      <Pill tone={photoTypeTone(customer.PhotoType)}>{customer.PhotoType}</Pill>
                     </td>
-                    <td>
-                      <span className="status-pill" style={getPaymentMethodStyle(customer.paymentMethod)}>
+                    <td className="px-5 py-4">
+                      <Pill tone={paymentMethodTone(customer.paymentMethod)}>
                         {customer.paymentMethod || "Not Recorded"}
-                      </span>
+                      </Pill>
                     </td>
-                    <td>
+                    <td className="px-5 py-4">
                       {/* TIRTIR KALIYA AYAA REEBAN MAADAAMA UU KAYD YAHAY */}
                       <button
-                        className="btn-delete-customer"
+                        className={`${ACTION_BTN} enabled:hover:bg-red-50 enabled:hover:text-red-500 dark:enabled:hover:bg-red-500/10`}
                         disabled={isRowLocked(customer)}
                         onClick={() => handleDelete(customer)}
-                        style={{
-                          background: "none",
-                          border: "none",
-                          cursor: isRowLocked(customer) ? "not-allowed" : "pointer",
-                          opacity: isRowLocked(customer) ? 0.4 : 1,
-                          fontSize: "16px",
-                          padding: "5px 10px",
-                        }}
                         title={
                           customer.pendingChange
                             ? "Isbeddel ayaa sugaya ansixin"
                             : isEmployee && customer.status === "Completed"
-                            ? "Shaqaaluhu ma tirtiri karaan order-yada Completed"
-                            : "Gabi ahaanba Tirtir"
+                              ? "Shaqaaluhu ma tirtiri karaan order-yada Completed"
+                              : "Gabi ahaanba Tirtir"
                         }
                       >
-                        🗑️
+                        <FaTrash size={13} />
                       </button>
                     </td>
                   </tr>
