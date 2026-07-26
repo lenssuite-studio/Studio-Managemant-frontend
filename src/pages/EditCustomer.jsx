@@ -15,27 +15,47 @@ export default function EditCustomer() {
     fullName: "",
     Phone: "",
     folderName: "",
-    customerType: "VIP",
+    // customerType: "VIP",
     status: "Pending",
-    PhotoType: "FullBody", // 🌟 KU DARID: State-ka bilowga ah waxaa lagu daray PhotoType
-    paymentMethod: "Cash",
+    PhotoType: "FullBody",
+    vipTierLevel: "VIP_1",
+    // paymentMethod: "Cash",
     amountPaid: 0,
     remainingAmount: 0,
     numberOfPhotos: 0,
+    normalPhotosCount: 0,
+    vipPhotosCount: 0,
+    expPhotosCount: 0,
+    expExtraCharge: 0,
+    cashAmount: 0,
+    zaadAmount: 0,
+    edahabAmount: 0,
     reason: "",
   });
 
-  // 🔥 GET SINGLE CUSTOMER (from list)
+  // GET SINGLE CUSTOMER
   useEffect(() => {
     const fetchData = async () => {
-      // 🌟 SAXID: Waxaan isticmaaleynaa API instance-ka la wadaago (Bearer token sax ah)
-      // halkii aan isticmaali lahayn axios tooska ah oo isticmaali jiray 'token' oo aan jirin
-      const res = await API.get("/Customer/List");
+      try {
+        const res = await API.get("/Customer/List");
+        const customer = res.data.find((c) => c._id === id);
 
-      const customer = res.data.find((c) => c._id === id);
-
-      if (customer) {
-        setFormData(customer);
+        if (customer) {
+          setFormData({
+            ...customer,
+            vipTierLevel: customer.vipTierLevel || "VIP_1",
+            normalPhotosCount: customer.normalPhotosCount || 0,
+            vipPhotosCount: customer.vipPhotosCount || 0,
+            expPhotosCount: customer.expPhotosCount || 0,
+            expExtraCharge: customer.expExtraCharge || 0,
+            cashAmount: customer.cashAmount || 0,
+            zaadAmount: customer.zaadAmount || 0,
+            edahabAmount: customer.edahabAmount || 0,
+            reason: "",
+          });
+        }
+      } catch (error) {
+        toast.error("Waa la qaadi waayay xogta macmiilka");
       }
     };
 
@@ -47,7 +67,6 @@ export default function EditCustomer() {
     const { name, value, type } = e.target;
     setFormData({
       ...formData,
-      // 🌟 SAXID: Haddii uu yahay input number ah, u beddel lambar dhab ah si uusan backend-ku u diidin
       [name]: type === "number" ? Number(value) : value,
     });
   };
@@ -56,29 +75,46 @@ export default function EditCustomer() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const result = await dispatch(updateCustomer({ id, customerData: formData })).unwrap();
+    try {
+      const result = await dispatch(updateCustomer({ id, customerData: formData })).unwrap();
 
-    // 🌟 PHASE 3 (fraud-prevention): Employee-ka codsigiisu wuxuu sugayaa ansixin,
-    // marka farriinta la muujiyo waa in ay saxdo waxa dhab ahaan dhacay
-    if (result?.pending) {
-      toast.success(result.message || "Isbeddelkaaga waxaa loo diray maamulaha si loo ansixiyo.");
-    } else {
-      toast.success("Customer si guul leh ayaa loo cusboonaysiiyay ✅");
+      if (result?.pending) {
+        toast.success(result.message || "Isbeddelkaaga waxaa loo diray maamulaha si loo ansixiyo.");
+      } else {
+        toast.success("Customer si guul leh ayaa loo cusboonaysiiyay ✅");
+      }
+
+      navigate("/Dashboard");
+    } catch (err) {
+      toast.error("Waxaa dhacday cillad xilliga cusboonaysiinta");
     }
-
-    navigate("/Dashboard");
   };
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">Edit Customer</h1>
+      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+        Edit Customer
+      </h1>
 
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900 sm:p-8"
       >
-        <TextField label="Full Name" name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" />
-        <TextField label="Phone Number" name="Phone" value={formData.Phone} onChange={handleChange} placeholder="Phone" />
+        {/* Basic Info */}
+        <TextField
+          label="Full Name"
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+          placeholder="Full Name"
+        />
+        <TextField
+          label="Phone Number"
+          name="Phone"
+          value={formData.Phone}
+          onChange={handleChange}
+          placeholder="Phone"
+        />
         <TextField
           label="Folder Name"
           name="folderName"
@@ -87,14 +123,51 @@ export default function EditCustomer() {
           placeholder="Folder Name"
         />
 
+        {/* Photos Counts Breakdown */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <TextField
-            label="Number of Photos"
+            label="Total Photos"
             type="number"
             name="numberOfPhotos"
             value={formData.numberOfPhotos}
             onChange={handleChange}
           />
+          <TextField
+            label="Normal Photos"
+            type="number"
+            name="normalPhotosCount"
+            value={formData.normalPhotosCount}
+            onChange={handleChange}
+          />
+          <TextField
+            label="VIP Photos"
+            type="number"
+            name="vipPhotosCount"
+            value={formData.vipPhotosCount}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* EXP Info */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <TextField
+            label="EXP Photos Count"
+            type="number"
+            name="expPhotosCount"
+            value={formData.expPhotosCount}
+            onChange={handleChange}
+          />
+          <TextField
+            label="EXP Extra Charge ($)"
+            type="number"
+            name="expExtraCharge"
+            value={formData.expExtraCharge}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Financial Amounts */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <TextField
             label="Amount Paid ($)"
             type="number"
@@ -111,14 +184,54 @@ export default function EditCustomer() {
           />
         </div>
 
+        {/* Payment Breakdown */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <TextField
+            label="Cash Amount ($)"
+            type="number"
+            name="cashAmount"
+            value={formData.cashAmount}
+            onChange={handleChange}
+          />
+          <TextField
+            label="Zaad Amount ($)"
+            type="number"
+            name="zaadAmount"
+            value={formData.zaadAmount}
+            onChange={handleChange}
+          />
+          <TextField
+            label="eDahab Amount ($)"
+            type="number"
+            name="edahabAmount"
+            value={formData.edahabAmount}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Types & Selects */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-          {/* 🌟 Talo: Magaca "Status" halkan waxaa loo beddelay Customer Type maadaama uu VIP/NORMAL yahay */}
-          <SelectField label="Customer Type" name="customerType" value={formData.customerType} onChange={handleChange}>
+          {/* <SelectField
+            label="Customer Type"
+            name="customerType"
+            value={formData.customerType}
+            onChange={handleChange}
+          >
             <option value="VIP">VIP</option>
             <option value="NORMAL">NORMAL</option>
+          </SelectField> */}
+
+          <SelectField
+            label="VIP Tier Level"
+            name="vipTierLevel"
+            value={formData.vipTierLevel}
+            onChange={handleChange}
+          >
+            <option value="VIP_1">VIP Tier 1</option>
+            <option value="VIP_2">VIP Tier 2</option>
+            <option value="VIP_3">VIP Tier 3</option>
           </SelectField>
 
-          {/* 🌟 KU DARID: Qaybta doorashada PhotoType ee foomka Edit-ka */}
           <SelectField
             label="Photo Type"
             name="PhotoType"
@@ -133,13 +246,18 @@ export default function EditCustomer() {
             <option value="Wedding">Wedding</option>
           </SelectField>
 
-          <SelectField label="Status" name="status" value={formData.status} onChange={handleChange}>
+          <SelectField
+            label="Status"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+          >
             <option value="Pending">Pending</option>
             <option value="Delivered">Delivered</option>
             <option value="Completed">Completed</option>
           </SelectField>
 
-          <SelectField
+          {/* <SelectField
             label="Payment Method"
             name="paymentMethod"
             value={formData.paymentMethod || "Cash"}
@@ -148,7 +266,7 @@ export default function EditCustomer() {
             <option value="Cash">Cash</option>
             <option value="Edahab">Edahab</option>
             <option value="SAAD">SAAD</option>
-          </SelectField>
+          </SelectField> */}
         </div>
 
         <TextAreaField

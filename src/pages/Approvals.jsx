@@ -131,6 +131,7 @@ export default function Approvals() {
                   </td>
                   <td className="px-5 py-4">
                     <Pill tone={actionTypeTone(pc.actionType)}>{actionLabels[pc.actionType]}</Pill>
+                   
                   </td>
                   <td className="px-5 py-4 text-slate-600 dark:text-slate-300">{pc.requestedBy?.username || "—"}</td>
                   <td className="px-5 py-4">

@@ -1,11 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getCustomer } from "../features/CustomerSlice";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteCustomer, archiveCustomer } from "../features/CustomerSlice";
 import { FaSearch, FaTrash, FaSyncAlt, FaArchive } from "react-icons/fa";
-import Pill, { statusTone, customerTypeTone, photoTypeTone, paymentMethodTone } from "../components/Pill";
+import Pill, {
+  statusTone,
+  customerTypeTone,
+  photoTypeTone,
+  paymentMethodTone,
+} from "../components/Pill";
 
 const ACTION_BTN =
   "flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-200 enabled:hover:-translate-y-0.5 enabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40";
@@ -15,26 +19,27 @@ export default function Dashboard() {
   const dispatch = useDispatch();
 
   const [searchTerm, setSearchTerm] = useState("");
-  // Soo qaado xogta iyo loading-ka
   const { customers, loading } = useSelector((state) => state.Customer);
   const { userCustomer } = useSelector((state) => state.auth);
   const isEmployee = userCustomer?.role === "employee";
-  console.log(customers);
 
-  // 1. HALKAN WAXAAN KU DARNAY ?. IYO || [] SI AY SAN XOGTU U CRASH GAROOBIN
+  // Filter-ka oo lagu daray dhammaan field-yada cusub iyo safety check (String conversion)
   const filteredCustomers =
     customers?.filter((customer) => {
       if (customer.isArchived) return false;
       const term = searchTerm.toLowerCase();
       return (
-        customer.fullName.toLowerCase().includes(term) ||
+        customer.fullName?.toLowerCase().includes(term) ||
         (customer.Phone && customer.Phone.toLowerCase().includes(term)) ||
-        customer.folderName.toLowerCase().includes(term) ||
-        customer.status.toLowerCase().includes(term) ||
-        customer.customerType.toLowerCase().includes(term) ||
+        customer.folderName?.toLowerCase().includes(term) ||
+        customer.status?.toLowerCase().includes(term) ||
+        customer.customerType?.toLowerCase().includes(term) ||
+        customer.vipTierLevel?.toLowerCase().includes(term) ||
         (customer.PhotoType &&
           customer.PhotoType.toLowerCase().includes(term)) ||
-        customer.paymentMethod?.toLowerCase().includes(term)
+        customer.paymentMethod?.toLowerCase().includes(term) ||
+        String(customer.normalPhotosCount || "").includes(term) ||
+        String(customer.vipPhotosCount || "").includes(term)
       );
     }) || [];
 
@@ -42,28 +47,26 @@ export default function Dashboard() {
     dispatch(getCustomer());
   }, [dispatch]);
 
-  // 🌟 PHASE 3 (fraud-prevention): row-ka waa la xayiraa haddii uu leeyahay isbeddel
-  // sugaya ansixin, ama haddii uu yahay Employee oo order-ku Completed yahay
   const isRowLocked = (customer) =>
     Boolean(customer.pendingChange) ||
     (isEmployee && customer.status === "Completed");
 
   return (
     <>
-      {/* KALIYA XOGTA DASHBOARD-KA (MAUQAALKA MIDIG) */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
             Macaamiisha Rasmiga ah
           </h1>
           <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-            Halkan ka maamul folder-rada, sawirrada iyo lacagaha studio-gaaga.
+            Halkan ka maamul folder-rada, sawirrada, VIP Tiers iyo lacagaha
+            studio-gaaga.
           </p>
           <div className="relative mt-4 max-w-md">
             <FaSearch className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="Search customers by name, phone or folder..."
+              placeholder="Search by name, phone, folder, VIP tier..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full rounded-full border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-700 shadow-sm outline-none transition-all duration-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:focus:ring-indigo-500/20"
@@ -88,26 +91,27 @@ export default function Dashboard() {
               : "Wali ma jiro wax la keydeyey"}
           </div>
         ) : (
-          <table className="w-full min-w-[1080px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[1280px] border-collapse text-left text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/60">
                 {[
                   "Full Name",
-                  "Phone Number",
+                  "Phone",
                   "Folder Name",
                   "Time",
-                  "Photos",
+                  "Photos ",
+                  "VIP Tier",
+                  "EXP Info",
                   "Amount Paid",
+                  "Payment Breakdown",
                   "Remaining",
                   "Status",
-                  "customerType",
-                  "PhotoType",
-                  "Payment Method",
+                  "Photo Type",
                   "Actions",
                 ].map((label) => (
                   <th
                     key={label}
-                    className="whitespace-nowrap border-b border-slate-200 px-5 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
+                    className="whitespace-nowrap border-b border-slate-200 px-4 py-4 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:border-slate-800 dark:text-slate-400"
                   >
                     {label}
                   </th>
@@ -115,7 +119,6 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody>
-              {/* 2. ISBEDDELKA RASMIGA AH: Halkan waxaa la saaray filteredCustomers halkii ay ka ahayd customers */}
               {Array.isArray(filteredCustomers) &&
               filteredCustomers.length > 0 ? (
                 filteredCustomers.map((customer) => (
@@ -123,69 +126,134 @@ export default function Dashboard() {
                     key={customer._id}
                     className="border-b border-slate-100 transition-colors duration-150 last:border-0 hover:bg-slate-50 dark:border-slate-800/60 dark:hover:bg-slate-800/40"
                   >
-                    <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">
+                    {/* Full Name & Type */}
+                    <td className="px-4 py-4 font-semibold text-slate-900 dark:text-white">
                       {customer.fullName}
                     </td>
-                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+
+                    {/* Phone */}
+                    <td className="px-4 py-4 text-slate-600 dark:text-slate-300 whitespace-nowrap">
                       {customer.Phone || "---"}
                     </td>
-                    <td className="px-5 py-4">
-                      <code className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+
+                    {/* Folder */}
+                    <td className="px-4 py-4">
+                      <code className="rounded-md bg-slate-100 px-2 py-1 font-mono text-xs text-slate-600 dark:bg-slate-800 dark:text-slate-300">
                         {customer.folderName}
                       </code>
                     </td>
-                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
+
+                    {/* Date */}
+                    <td className="px-5 py-4 text-xs font-medium text-slate-500 dark:text-slate-400">
                       {new Date(customer.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-5 py-4 text-slate-600 dark:text-slate-300">
-                      {customer.numberOfPhotos}
+
+                    {/* 📸 Photos Breakdown (Total, Normal & VIP) */}
+                    <td className="px-4 py-4">
+                      <div className="flex flex-col gap-1 text-xs">
+                        <span className="font-medium text-slate-700 dark:text-slate-200">
+                          Total: {customer.numberOfPhotos || 0}
+                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[11px] font-medium text-blue-700 dark:bg-blue-950/50 dark:text-blue-300">
+                            Normal: {customer.normalPhotosCount || 0}
+                          </span>
+                          <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-950/50 dark:text-amber-300">
+                            VIP: {customer.vipPhotosCount || 0}
+                          </span>
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-5 py-4 font-medium text-slate-900 dark:text-white">
-                      ${customer.amountPaid}
+
+                    {/* ⭐ VIP Tier Level */}
+                    <td className="px-4 py-4">
+                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">
+                        {customer.vipTierLevel || "VIP_1"}
+                      </span>
                     </td>
+
+                    {/* ⏱️ EXP Info */}
+                    <td className="px-4 py-4 text-xs text-slate-600 dark:text-slate-400">
+                      <div>EXP : {customer.expPhotosCount || 0}</div>
+                      {customer.expExtraCharge > 0 && (
+                        <div className="font-semibold text-indigo-600 dark:text-indigo-400">
+                          +${customer.expExtraCharge}
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Amount Paid */}
+                    <td className="px-4 py-4 font-semibold text-slate-900 dark:text-white">
+                      ${customer.amountPaid || 0}
+                    </td>
+
+                    {/* 💳 Payment Breakdown (Cash / Zaad / eDahab) */}
+                    <td className="px-4 py-4 text-xs">
+                      <div className="flex flex-col gap-0.5 text-slate-500 dark:text-slate-400">
+                        {customer.cashAmount > 0 && (
+                          <span>💵 Cash: ${customer.cashAmount}</span>
+                        )}
+                        {customer.zaadAmount > 0 && (
+                          <span>📱 Zaad: ${customer.zaadAmount}</span>
+                        )}
+                        {customer.edahabAmount > 0 && (
+                          <span>💳 eDahab: ${customer.edahabAmount}</span>
+                        )}
+                        {/* {!customer.cashAmount &&
+                          !customer.zaadAmount &&
+                          !customer.edahabAmount && (
+                            <Pill tone={paymentMethodTone(customer.paymentMethod)}>
+                              {customer.paymentMethod || "0"}
+                            </Pill>
+                          )} */}
+                      </div>
+                    </td>
+
+                    {/* Remaining */}
                     <td
-                      className={`px-5 py-4 font-semibold ${
+                      className={`px-4 py-4 font-semibold ${
                         customer.remainingAmount > 0
                           ? "text-red-500"
                           : "text-emerald-500"
                       }`}
                     >
-                      ${customer.remainingAmount}
+                      ${customer.remainingAmount || 0}
                     </td>
-                    <td className="px-5 py-4">
+
+                    {/* Status */}
+                    <td className="px-4 py-4">
                       <div className="flex flex-wrap items-center gap-1.5">
-                        <Pill tone={statusTone(customer.status)}>{customer.status}</Pill>
+                        <Pill tone={statusTone(customer.status)}>
+                          {customer.status}
+                        </Pill>
                         {customer.pendingChange && (
-                          <Pill tone="amber" title="Isbeddel ayaa sugaya ansixinta maamulaha">
+                          <Pill
+                            tone="amber"
+                            title="Isbeddel ayaa sugaya ansixinta maamulaha"
+                          >
                             ⏳ Pending
                           </Pill>
                         )}
                       </div>
                     </td>
 
-                    <td className="px-5 py-4">
-                      <Pill tone={customerTypeTone(customer.customerType)}>
-                        {customer.customerType}
+                    {/* Photo Type */}
+                    <td className="px-4 py-4">
+                      <Pill tone={photoTypeTone(customer.PhotoType)}>
+                        {customer.PhotoType}
                       </Pill>
                     </td>
 
-                    <td className="px-5 py-4">
-                      <Pill tone={photoTypeTone(customer.PhotoType)}>{customer.PhotoType}</Pill>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <Pill tone={paymentMethodTone(customer.paymentMethod)}>
-                        {customer.paymentMethod || "Not Recorded"}
-                      </Pill>
-                    </td>
-
-                    <td className="px-5 py-4">
+                    {/* Actions */}
+                    <td className="px-4 py-4">
                       <div className="flex items-center gap-1">
                         <button
                           className={`${ACTION_BTN} enabled:hover:bg-red-50 enabled:hover:text-red-500 dark:enabled:hover:bg-red-500/10`}
                           disabled={isRowLocked(customer)}
                           onClick={() => {
-                            if (window.confirm("Ma tirtiraysaa customer-kan?")) {
+                            if (
+                              window.confirm("Ma tirtiraysaa customer-kan?")
+                            ) {
                               dispatch(deleteCustomer(customer._id));
                             }
                           }}
@@ -202,7 +270,9 @@ export default function Dashboard() {
                         <button
                           className={`${ACTION_BTN} enabled:hover:bg-indigo-50 enabled:hover:text-indigo-600 dark:enabled:hover:bg-indigo-500/10`}
                           disabled={isRowLocked(customer)}
-                          onClick={() => navigate(`/EditCustomer/${customer._id}`)}
+                          onClick={() =>
+                            navigate(`/EditCustomer/${customer._id}`)
+                          }
                           title={
                             customer.pendingChange
                               ? "Isbeddel ayaa sugaya ansixin"
@@ -219,19 +289,13 @@ export default function Dashboard() {
                           onClick={() => {
                             if (
                               window.confirm(
-                                `Ma rabtaa inaad Archive (Kaydka) u rarto macmiilkan: ${customer.fullName}?`,
+                                `Ma rabtaa inaad Archive u rarto: ${customer.fullName}?`,
                               )
                             ) {
                               dispatch(archiveCustomer(customer._id));
                             }
                           }}
-                          title={
-                            customer.pendingChange
-                              ? "Isbeddel ayaa sugaya ansixin"
-                              : isEmployee && customer.status === "Completed"
-                                ? "Shaqaaluhu ma kaydin karaan order-yada Completed"
-                                : "U rar Kaydka (Archive)"
-                          }
+                          title="U rar Kaydka (Archive)"
                         >
                           <FaArchive size={13} />
                         </button>
@@ -241,7 +305,10 @@ export default function Dashboard() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="12" className="px-5 py-10 text-center text-slate-500 dark:text-slate-400">
+                  <td
+                    colSpan="12"
+                    className="px-5 py-10 text-center text-slate-500 dark:text-slate-400"
+                  >
                     Wax macaamiil ah lama helin.
                   </td>
                 </tr>
