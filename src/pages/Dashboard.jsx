@@ -44,6 +44,7 @@ export default function Dashboard() {
         String(customer.vipPhotosCount || "").includes(term)
       );
     }) || [];
+    
 
   useEffect(() => {
     dispatch(getCustomer());
