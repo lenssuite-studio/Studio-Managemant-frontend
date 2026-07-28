@@ -10,6 +10,7 @@ import Pill, {
   photoTypeTone,
   paymentMethodTone,
 } from "../components/Pill";
+import WhatsappButton from "../components/WhatsappButton";
 
 const ACTION_BTN =
   "flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition-all duration-200 enabled:hover:-translate-y-0.5 enabled:hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40";
@@ -247,6 +248,7 @@ export default function Dashboard() {
                     {/* Actions */}
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-1">
+                        <WhatsappButton customer={customer} />
                         <button
                           className={`${ACTION_BTN} enabled:hover:bg-red-50 enabled:hover:text-red-500 dark:enabled:hover:bg-red-500/10`}
                           disabled={isRowLocked(customer)}

@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { updateCustomer } from "../features/CustomerSlice";
 import toast from "react-hot-toast";
 import { TextField, SelectField, TextAreaField } from "../components/FormField";
+import WhatsappButton from "../components/WhatsappButton";
 
 export default function EditCustomer() {
   const { id } = useParams();
@@ -92,9 +93,12 @@ export default function EditCustomer() {
 
   return (
     <div className="mx-auto w-full max-w-2xl">
-      <h1 className="mb-6 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
-        Edit Customer
-      </h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+          Edit Customer
+        </h1>
+        <WhatsappButton customer={formData} label="Send Receipt" />
+      </div>
 
       <form
         onSubmit={handleSubmit}
