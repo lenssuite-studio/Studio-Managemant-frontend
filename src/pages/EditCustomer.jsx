@@ -6,6 +6,7 @@ import { updateCustomer } from "../features/CustomerSlice";
 import toast from "react-hot-toast";
 import { TextField, SelectField, TextAreaField } from "../components/FormField";
 import WhatsappButton from "../components/WhatsappButton";
+import ReceiptPrintButton from "../components/ReceiptPrintButton";
 
 export default function EditCustomer() {
   const { id } = useParams();
@@ -97,7 +98,14 @@ export default function EditCustomer() {
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
           Edit Customer
         </h1>
-        <WhatsappButton customer={formData} label="Send Receipt" />
+        <div className="flex items-center gap-2">
+          <WhatsappButton customer={formData} label="Send Receipt" />
+          <ReceiptPrintButton
+            customer={formData}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:text-indigo-600 hover:shadow-md dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400 dark:hover:bg-slate-800"
+            size={15}
+          />
+        </div>
       </div>
 
       <form

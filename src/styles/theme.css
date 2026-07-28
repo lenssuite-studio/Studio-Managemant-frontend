@@ -279,3 +279,90 @@ a {
    styled with Tailwind utility classes directly in JSX — this file only
    needs to supply the dark: variant wiring above (@custom-variant) and the
    --color-brand-* tokens under @theme. */
+
+/* ---------- Printing (Executive Reports + Customer Receipts) ---------- */
+/* A single-customer receipt (ReceiptPrintButton.jsx) is portaled into
+   document.body on demand and must never be visible during normal browsing —
+   only @media print below reveals it. */
+.receipt-print-area {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  /* Only the active printable region (a full report, or a single receipt)
+     and its contents are revealed — everything else (sidebar, buttons,
+     search bars, period selectors) stays hidden regardless of page. */
+  .report-print-area,
+  .report-print-area *,
+  .receipt-print-area,
+  .receipt-print-area * {
+    visibility: visible;
+  }
+
+  .receipt-print-area {
+    position: static;
+    left: auto;
+  }
+
+  .report-print-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  /* Thermal POS receipt: narrow, monospace, black & white */
+  .receipt {
+    width: 76mm;
+    margin: 0 auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #000;
+  }
+
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 1.5px 0;
+  }
+
+  .receipt-total,
+  .receipt-balance {
+    font-weight: 700;
+  }
+
+  .receipt-header h2 {
+    margin: 0;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .receipt-header p {
+    margin: 2px 0 0;
+    text-align: center;
+    font-size: 10px;
+  }
+
+  .receipt-footer {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 10px;
+  }
+
+  .receipt hr {
+    border: none;
+    border-top: 1px dashed #000;
+    margin: 4px 0;
+  }
+}

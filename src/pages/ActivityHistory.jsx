@@ -15,7 +15,7 @@ function formatSnapshot(snapshot) {
 export default function ActivityHistory() {
   const dispatch = useDispatch();
   const { entries, loading } = useSelector((state) => state.ActivityHistory);
-
+console.log(entries);
   useEffect(() => {
     dispatch(getActivityHistory());
   }, [dispatch]);

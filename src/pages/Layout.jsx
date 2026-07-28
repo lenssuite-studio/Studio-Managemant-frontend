@@ -81,7 +81,7 @@ export default function Layout() {
     <div className="flex min-h-screen w-full bg-slate-50 dark:bg-slate-950">
       {/* SIDEBAR-KA GUUD — MAR KASTA WUU TAAGNAANAYAA */}
       <div
-        className={`sticky top-0 flex h-screen shrink-0 flex-col border-r border-slate-200 bg-white px-3 py-6 transition-all duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-900 ${
+        className={`no-print sticky top-0 flex h-screen shrink-0 flex-col border-r border-slate-200 bg-white px-3 py-6 transition-all duration-300 ease-in-out dark:border-slate-800 dark:bg-slate-900 ${
           collapsed ? "w-20" : "w-64"
         }`}
       >

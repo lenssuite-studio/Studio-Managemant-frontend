@@ -24,6 +24,9 @@ export function exportReportToPDF(report, periodLabel) {
   doc.setFontSize(10);
   doc.text(`${periodLabel}: ${fromStr} - ${toStr}`, 14, 25);
 
+  const totalExpenses = report.expenses?.total || 0;
+  const netProfit = report.netProfit ?? report.revenue.totalPaid - totalExpenses;
+
   autoTable(doc, {
     startY: 32,
     head: [["Metric", "Value"]],
@@ -32,6 +35,11 @@ export function exportReportToPDF(report, periodLabel) {
       ["Outstanding (Debt)", `$${report.revenue.totalOutstanding.toLocaleString()}`],
       ["Total Orders", String(report.revenue.orderCount)],
       ["Total Photos", String(report.photoCount)],
+      ["Total Cash", `$${(report.revenue.totalCash || 0).toLocaleString()}`],
+      ["Total Zaad", `$${(report.revenue.totalZaad || 0).toLocaleString()}`],
+      ["Total eDahab", `$${(report.revenue.totaleDahab || 0).toLocaleString()}`],
+      ["Total Expenses", `$${totalExpenses.toLocaleString()}`],
+      ["Net Profit", `$${netProfit.toLocaleString()}`],
     ],
   });
 
@@ -77,6 +85,19 @@ export function exportReportToPDF(report, periodLabel) {
       : [["No data for this period", "", ""]],
   });
 
+  nextY = doc.lastAutoTable.finalY + 12;
+  doc.setFontSize(12);
+  doc.text("Expenses by Category", 14, nextY - 4);
+
+  const expensesByCategory = report.expenses?.byCategory || [];
+  autoTable(doc, {
+    startY: nextY,
+    head: [["Category", "Amount"]],
+    body: expensesByCategory.length
+      ? expensesByCategory.map((e) => [e.category || "—", `$${e.total.toLocaleString()}`])
+      : [["No expenses for this period", ""]],
+  });
+
   doc.save(`studio-report-${fromStr}-to-${toStr}.pdf`);
 }
 
@@ -84,12 +105,20 @@ export function exportReportToPDF(report, periodLabel) {
 export function exportReportToExcel(report, periodLabel) {
   const { fromStr, toStr } = rangeLabel(report);
 
+  const totalExpenses = report.expenses?.total || 0;
+  const netProfit = report.netProfit ?? report.revenue.totalPaid - totalExpenses;
+
   const summarySheet = XLSX.utils.json_to_sheet([
     { Metric: "Period", Value: `${periodLabel}: ${fromStr} - ${toStr}` },
     { Metric: "Total Revenue (Paid)", Value: report.revenue.totalPaid },
     { Metric: "Outstanding (Debt)", Value: report.revenue.totalOutstanding },
     { Metric: "Total Orders", Value: report.revenue.orderCount },
     { Metric: "Total Photos", Value: report.photoCount },
+    { Metric: "Total Cash", Value: report.revenue.totalCash || 0 },
+    { Metric: "Total Zaad", Value: report.revenue.totalZaad || 0 },
+    { Metric: "Total eDahab", Value: report.revenue.totaleDahab || 0 },
+    { Metric: "Total Expenses", Value: totalExpenses },
+    { Metric: "Net Profit", Value: netProfit },
   ]);
 
   const employeeSheet = XLSX.utils.json_to_sheet(
@@ -117,11 +146,19 @@ export function exportReportToExcel(report, periodLabel) {
     })),
   );
 
+  const expensesSheet = XLSX.utils.json_to_sheet(
+    (report.expenses?.byCategory || []).map((e) => ({
+      Category: e.category,
+      Amount: e.total,
+    })),
+  );
+
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
   XLSX.utils.book_append_sheet(workbook, employeeSheet, "Employee Performance");
   XLSX.utils.book_append_sheet(workbook, serviceSheet, "Service Breakdown");
   XLSX.utils.book_append_sheet(workbook, paymentSheet, "Payment Breakdown");
+  XLSX.utils.book_append_sheet(workbook, expensesSheet, "Expenses");
 
   XLSX.writeFile(workbook, `studio-report-${fromStr}-to-${toStr}.xlsx`);
 }

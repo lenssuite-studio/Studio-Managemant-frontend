@@ -58,8 +58,10 @@ export const photoTypeTone = (photoType) => {
 
 export const paymentMethodTone = (paymentMethod) => {
   if (paymentMethod === "Cash") return "green";
+  if (paymentMethod === "Zaad") return "blue";
   if (paymentMethod === "Edahab") return "orange";
-  if (paymentMethod === "SAAD") return "indigo";
+  if (paymentMethod === "Mixed") return "purple";
+  if (paymentMethod === "SAAD") return "indigo"; // legacy value, kept for old records
   return "slate";
 };
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getReport } from "../features/ReportsSlice";
 import { getPeriodRange, PERIOD_LABELS } from "../utils/reportPeriods";
 import toast from "react-hot-toast";
-import { FaFileAlt, FaFileExcel } from "react-icons/fa";
+import { FaFileAlt, FaFileExcel, FaPrint } from "react-icons/fa";
 import StatCard from "../components/StatCard";
 import PeriodSelector from "../components/PeriodSelector";
 import Pill, { roleTone } from "../components/Pill";
@@ -53,6 +53,11 @@ export default function Reports() {
     exportReportToExcel(report, PERIOD_LABELS[period]);
   };
 
+  const handlePrint = () => window.print();
+
+  const netProfit = report?.netProfit ?? 0;
+  const totalExpenses = report?.expenses?.total || 0;
+
   const topService = report?.serviceBreakdown?.[0] || null;
 
   return (
@@ -72,6 +77,7 @@ export default function Reports() {
       </div>
             {/* PERIOD SELECTOR */}
            {" "}
+      <div className="no-print">
       <PeriodSelector
         period={period}
         setPeriod={setPeriod}
@@ -100,10 +106,19 @@ export default function Reports() {
             >
                             <FaFileExcel /> Export Excel            {" "}
             </button>
+            <button
+              type="button"
+              onClick={handlePrint}
+              disabled={!report || loading}
+              className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
+            >
+              <FaPrint /> Print Report
+            </button>
                      {" "}
           </>
         }
       />
+      </div>
            {" "}
       {loading && (
         <div className="flex justify-center py-10 text-sm text-slate-500 dark:text-slate-400">
@@ -112,7 +127,7 @@ export default function Reports() {
       )}
            {" "}
       {!loading && report && (
-        <>
+        <div className="report-print-area">
                     {/* STATS GRID */}         {" "}
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
                        {" "}
@@ -370,8 +385,51 @@ export default function Reports() {
               )}
             </div>
           </div>
+
+          {/* EXPENSES & NET PROFIT */}
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <StatCard
+              icon="💸"
+              tone="red"
+              label="Total Expenses"
+              value={`$${totalExpenses.toLocaleString()}`}
+              valueClassName="text-red-500!"
+            />
+            <StatCard
+              icon="📈"
+              tone={netProfit >= 0 ? "green" : "red"}
+              label="Net Profit"
+              value={`$${netProfit.toLocaleString()}`}
+              valueClassName={netProfit >= 0 ? "text-emerald-500!" : "text-red-500!"}
+            />
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
+            <h3 className="mb-4 text-base font-semibold text-slate-900 dark:text-white">
+              💰 Expenses by Category
+            </h3>
+            <div className="flex flex-col gap-2.5">
+              {!report.expenses?.byCategory || report.expenses.byCategory.length === 0 ? (
+                <span className="text-sm text-slate-500 dark:text-slate-400">
+                  Wax kharash ah lama diiwaan gelin muddadan.
+                </span>
+              ) : (
+                report.expenses.byCategory.map((e) => (
+                  <div
+                    key={e.category}
+                    className="flex items-center justify-between text-sm"
+                  >
+                    <span className="text-slate-500 dark:text-slate-400">{e.category}</span>
+                    <span className="font-semibold text-red-500">
+                      ${e.total.toLocaleString()}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
                  {" "}
-        </>
+        </div>
       )}
          {" "}
     </div>
