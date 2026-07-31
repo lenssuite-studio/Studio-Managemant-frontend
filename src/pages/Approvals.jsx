@@ -5,6 +5,7 @@ import {
   approvePendingChange,
   rejectPendingChange,
 } from "../features/ApprovalsSlice";
+import { getCustomer } from "../features/CustomerSlice";
 import toast from "react-hot-toast";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import Pill, { actionTypeTone } from "../components/Pill";
@@ -64,6 +65,7 @@ export default function Approvals() {
     if (!window.confirm(`Ma ansixinaysaa isbeddelkan (${actionLabels[pendingChange.actionType]})?`)) return;
     try {
       await dispatch(approvePendingChange(pendingChange._id)).unwrap();
+      dispatch(getCustomer());
       toast.success("Isbeddelka waa la ansixiyay! ✅");
     } catch (err) {
       toast.error(err || "Cillad ayaa dhacday.");
@@ -74,6 +76,7 @@ export default function Approvals() {
     if (!window.confirm(`Ma diidaysaa isbeddelkan (${actionLabels[pendingChange.actionType]})?`)) return;
     try {
       await dispatch(rejectPendingChange(pendingChange._id)).unwrap();
+      dispatch(getCustomer());
       toast.success("Isbeddelka waa la diiday.");
     } catch (err) {
       toast.error(err || "Cillad ayaa dhacday.");
