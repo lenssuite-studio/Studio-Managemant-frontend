@@ -31,15 +31,15 @@ export function exportReportToPDF(report, periodLabel) {
     startY: 32,
     head: [["Metric", "Value"]],
     body: [
-      ["Total Revenue (Paid)", `$${report.revenue.totalPaid.toLocaleString()}`],
-      ["Outstanding (Debt)", `$${report.revenue.totalOutstanding.toLocaleString()}`],
+      ["Total Revenue (Paid)", `SLSH ${report.revenue.totalPaid.toLocaleString()}`],
+      ["Outstanding (Debt)", `SLSH ${report.revenue.totalOutstanding.toLocaleString()}`],
       ["Total Orders", String(report.revenue.orderCount)],
       ["Total Photos", String(report.photoCount)],
-      ["Total Cash", `$${(report.revenue.totalCash || 0).toLocaleString()}`],
-      ["Total Zaad", `$${(report.revenue.totalZaad || 0).toLocaleString()}`],
-      ["Total eDahab", `$${(report.revenue.totaleDahab || 0).toLocaleString()}`],
-      ["Total Expenses", `$${totalExpenses.toLocaleString()}`],
-      ["Net Profit", `$${netProfit.toLocaleString()}`],
+      ["Total Cash", `SLSH ${(report.revenue.totalCash || 0).toLocaleString()}`],
+      ["Total Zaad", `SLSH ${(report.revenue.totalZaad || 0).toLocaleString()}`],
+      ["Total eDahab", `SLSH ${(report.revenue.totaleDahab || 0).toLocaleString()}`],
+      ["Total Expenses", `SLSH ${totalExpenses.toLocaleString()}`],
+      ["Net Profit", `SLSH ${netProfit.toLocaleString()}`],
     ],
   });
 
@@ -55,7 +55,7 @@ export function exportReportToPDF(report, periodLabel) {
           e.username,
           roleLabel(e.role),
           String(e.orderCount),
-          `$${e.revenue.toLocaleString()}`,
+          `SLSH ${e.revenue.toLocaleString()}`,
           String(e.photoCount),
         ])
       : [["No data for this period", "", "", "", ""]],
@@ -81,7 +81,7 @@ export function exportReportToPDF(report, periodLabel) {
     startY: nextY,
     head: [["Payment Method", "Orders", "Amount Collected"]],
     body: report.paymentBreakdown && report.paymentBreakdown.length
-      ? report.paymentBreakdown.map((p) => [p.paymentMethod || "—", String(p.count), `$${p.totalPaid.toLocaleString()}`])
+      ? report.paymentBreakdown.map((p) => [p.paymentMethod || "—", String(p.count), `SLSH ${p.totalPaid.toLocaleString()}`])
       : [["No data for this period", "", ""]],
   });
 
@@ -94,7 +94,7 @@ export function exportReportToPDF(report, periodLabel) {
     startY: nextY,
     head: [["Category", "Amount"]],
     body: expensesByCategory.length
-      ? expensesByCategory.map((e) => [e.category || "—", `$${e.total.toLocaleString()}`])
+      ? expensesByCategory.map((e) => [e.category || "—", `SLSH ${e.total.toLocaleString()}`])
       : [["No expenses for this period", ""]],
   });
 

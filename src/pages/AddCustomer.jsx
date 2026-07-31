@@ -18,12 +18,14 @@ export default function AddCustomer() {
     folderName: "",
     status: "Pending",
     PhotoType: "FullBody",
-    vipTierLevel: "VIP_1",
     amountPaid: 0,
     remainingAmount: 0,
     numberOfPhotos: 0,
     normalPhotosCount: 0,
     vipPhotosCount: 0,
+    vip1PhotosCount: 0,
+    vip2PhotosCount: 0,
+    vip3PhotosCount: 0,
     expPhotosCount: 0,
     expExtraCharge: 0,
     cashAmount: 0,
@@ -151,18 +153,34 @@ export default function AddCustomer() {
             />
           </div>
 
-          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <SelectField
-              label="VIP Tier Level"
-              name="vipTierLevel"
-              value={FromData.vipTierLevel}
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <TextField
+              label="VIP 1 Photos Count"
+              placeholder="0"
+              name="vip1PhotosCount"
+              type="number"
+              value={FromData.vip1PhotosCount}
               onChange={handleChange}
-            >
-              <option value="VIP_1">VIP 1 (Standard VIP)</option>
-              <option value="VIP_2">VIP 2 (Premium VIP)</option>
-              <option value="VIP_3">VIP 3 (Exclusive VIP)</option>
-            </SelectField>
+            />
+            <TextField
+              label="VIP 2 Photos Count"
+              placeholder="0"
+              name="vip2PhotosCount"
+              type="number"
+              value={FromData.vip2PhotosCount}
+              onChange={handleChange}
+            />
+            <TextField
+              label="VIP 3 Photos Count"
+              placeholder="0"
+              name="vip3PhotosCount"
+              type="number"
+              value={FromData.vip3PhotosCount}
+              onChange={handleChange}
+            />
+          </div>
 
+          <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
             <SelectField
               label="Order Status"
               name="status"
@@ -217,21 +235,21 @@ export default function AddCustomer() {
 
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
             <TextField
-              label="Cash Paid ($)"
+              label="Cash Paid (SLSH)"
               type="number"
               name="cashAmount"
               value={FromData.cashAmount}
               onChange={handleChange}
             />
             <TextField
-              label="Zaad Paid ($)"
+              label="Zaad Paid (SLSH)"
               type="number"
               name="zaadAmount"
               value={FromData.zaadAmount}
               onChange={handleChange}
             />
             <TextField
-              label="eDahab Paid ($)"
+              label="eDahab Paid (SLSH)"
               type="number"
               name="edahabAmount"
               value={FromData.edahabAmount}

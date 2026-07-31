@@ -46,8 +46,8 @@ export function buildReceiptMessage(customer) {
     "Waa kuwan faahfaahinta rasiidkaaga:",
     `📁 Folder: ${folderName}`,
     `📸 Wadarta Sawirada: ${totalPhotos}`,
-    `💰 Lacagta La Bixiyay: $${amountPaid}`,
-    `⏳ Hadhaaga: $${remainingAmount}`,
+    `💰 Lacagta La Bixiyay: SLSH ${amountPaid}`,
+    `⏳ Hadhaaga: SLSH ${remainingAmount}`,
     "",
     "Mahadsanid inaad na soo doorbidday! 🙏",
   ].join("\n");

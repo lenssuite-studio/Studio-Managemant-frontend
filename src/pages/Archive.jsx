@@ -13,7 +13,6 @@ import {
 } from "react-icons/fa";
 import Pill, {
   statusTone,
-  customerTypeTone,
   photoTypeTone,
   paymentMethodTone,
 } from "../components/Pill";
@@ -158,7 +157,7 @@ export default function Archive() {
               Dakhliga Ku Jira
             </p>
             <p className="text-xl font-bold text-slate-900 dark:text-white">
-              ${stats.totalPaid}
+              SLSH {stats.totalPaid}
             </p>
           </div>
         </div>
@@ -195,7 +194,7 @@ export default function Archive() {
                     "Folder Name",
                     "Date",
                     "Photos Breakdown",
-                    "VIP Tier",
+                    "VIP Breakdown",
                     "EXP Info",
                     "Amount Paid",
                     "Payment Breakdown",
@@ -252,18 +251,18 @@ export default function Archive() {
                       </div>
                     </td>
 
-                    {/* VIP Tier */}
-                    <td className="px-5 py-4">
-                      <Pill tone={customerTypeTone(customer.customerType)}>
-                        {customer.vipTierLevel || customer.customerType}
-                      </Pill>
+                    {/* VIP Tier Breakdown */}
+                    <td className="px-5 py-4 text-xs font-medium text-slate-600 dark:text-slate-300">
+                      <div>VIP1: {customer.vip1PhotosCount || 0}</div>
+                      <div>VIP2: {customer.vip2PhotosCount || 0}</div>
+                      <div>VIP3: {customer.vip3PhotosCount || 0}</div>
                     </td>
 
                     {/* EXP Info */}
                     <td className="px-5 py-4 text-xs font-medium text-slate-600 dark:text-slate-300">
                       {customer.expPhotosCount > 0 ? (
                         <span className="font-semibold text-amber-600 dark:text-amber-400">
-                          {customer.expPhotosCount} pcs (+${customer.expExtraCharge || 0})
+                          {customer.expPhotosCount} pcs (+SLSH {customer.expExtraCharge || 0})
                         </span>
                       ) : (
                         <span className="text-slate-400">--</span>
@@ -272,7 +271,7 @@ export default function Archive() {
 
                     {/* Amount Paid */}
                     <td className="px-5 py-4 font-bold text-slate-900 dark:text-white">
-                      ${customer.amountPaid}
+                      SLSH {customer.amountPaid}
                     </td>
 
                     {/* Payment Breakdown */}
@@ -280,17 +279,17 @@ export default function Archive() {
                       <div className="flex flex-col gap-0.5">
                         {customer.cashAmount > 0 && (
                           <span className="text-emerald-600 dark:text-emerald-400">
-                            💵 Cash: ${customer.cashAmount}
+                            💵 Cash: SLSH {customer.cashAmount}
                           </span>
                         )}
                         {customer.zaadAmount > 0 && (
                           <span className="text-blue-600 dark:text-blue-400">
-                            📱 Zaad: ${customer.zaadAmount}
+                            📱 Zaad: SLSH {customer.zaadAmount}
                           </span>
                         )}
                         {customer.edahabAmount > 0 && (
                           <span className="text-amber-600 dark:text-amber-400">
-                            💳 eDahab: ${customer.edahabAmount}
+                            💳 eDahab: SLSH {customer.edahabAmount}
                           </span>
                         )}
                         {!customer.cashAmount &&
@@ -311,7 +310,7 @@ export default function Archive() {
                           : "text-emerald-500"
                       }`}
                     >
-                      ${customer.remainingAmount}
+                      SLSH {customer.remainingAmount}
                     </td>
 
                     {/* Status */}

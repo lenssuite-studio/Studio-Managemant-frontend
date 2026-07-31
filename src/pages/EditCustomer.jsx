@@ -20,13 +20,15 @@ export default function EditCustomer() {
     // customerType: "VIP",
     status: "Pending",
     PhotoType: "FullBody",
-    vipTierLevel: "VIP_1",
     // paymentMethod: "Cash",
     amountPaid: 0,
     remainingAmount: 0,
     numberOfPhotos: 0,
     normalPhotosCount: 0,
     vipPhotosCount: 0,
+    vip1PhotosCount: 0,
+    vip2PhotosCount: 0,
+    vip3PhotosCount: 0,
     expPhotosCount: 0,
     expExtraCharge: 0,
     cashAmount: 0,
@@ -45,9 +47,11 @@ export default function EditCustomer() {
         if (customer) {
           setFormData({
             ...customer,
-            vipTierLevel: customer.vipTierLevel || "VIP_1",
             normalPhotosCount: customer.normalPhotosCount || 0,
             vipPhotosCount: customer.vipPhotosCount || 0,
+            vip1PhotosCount: customer.vip1PhotosCount || 0,
+            vip2PhotosCount: customer.vip2PhotosCount || 0,
+            vip3PhotosCount: customer.vip3PhotosCount || 0,
             expPhotosCount: customer.expPhotosCount || 0,
             expExtraCharge: customer.expExtraCharge || 0,
             cashAmount: customer.cashAmount || 0,
@@ -160,6 +164,31 @@ export default function EditCustomer() {
           />
         </div>
 
+        {/* VIP Tier Breakdown */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <TextField
+            label="VIP 1 Photos Count"
+            type="number"
+            name="vip1PhotosCount"
+            value={formData.vip1PhotosCount}
+            onChange={handleChange}
+          />
+          <TextField
+            label="VIP 2 Photos Count"
+            type="number"
+            name="vip2PhotosCount"
+            value={formData.vip2PhotosCount}
+            onChange={handleChange}
+          />
+          <TextField
+            label="VIP 3 Photos Count"
+            type="number"
+            name="vip3PhotosCount"
+            value={formData.vip3PhotosCount}
+            onChange={handleChange}
+          />
+        </div>
+
         {/* EXP Info */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <TextField
@@ -170,7 +199,7 @@ export default function EditCustomer() {
             onChange={handleChange}
           />
           <TextField
-            label="EXP Extra Charge ($)"
+            label="EXP Extra Charge (SLSH)"
             type="number"
             name="expExtraCharge"
             value={formData.expExtraCharge}
@@ -181,14 +210,14 @@ export default function EditCustomer() {
         {/* Financial Amounts */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <TextField
-            label="Amount Paid ($)"
+            label="Amount Paid (SLSH)"
             type="number"
             name="amountPaid"
             value={formData.amountPaid}
             onChange={handleChange}
           />
           <TextField
-            label="Remaining Amount ($)"
+            label="Remaining Amount (SLSH)"
             type="number"
             name="remainingAmount"
             value={formData.remainingAmount}
@@ -199,21 +228,21 @@ export default function EditCustomer() {
         {/* Payment Breakdown */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <TextField
-            label="Cash Amount ($)"
+            label="Cash Amount (SLSH)"
             type="number"
             name="cashAmount"
             value={formData.cashAmount}
             onChange={handleChange}
           />
           <TextField
-            label="Zaad Amount ($)"
+            label="Zaad Amount (SLSH)"
             type="number"
             name="zaadAmount"
             value={formData.zaadAmount}
             onChange={handleChange}
           />
           <TextField
-            label="eDahab Amount ($)"
+            label="eDahab Amount (SLSH)"
             type="number"
             name="edahabAmount"
             value={formData.edahabAmount}
@@ -232,17 +261,6 @@ export default function EditCustomer() {
             <option value="VIP">VIP</option>
             <option value="NORMAL">NORMAL</option>
           </SelectField> */}
-
-          <SelectField
-            label="VIP Tier Level"
-            name="vipTierLevel"
-            value={formData.vipTierLevel}
-            onChange={handleChange}
-          >
-            <option value="VIP_1">VIP Tier 1</option>
-            <option value="VIP_2">VIP Tier 2</option>
-            <option value="VIP_3">VIP Tier 3</option>
-          </SelectField>
 
           <SelectField
             label="Photo Type"

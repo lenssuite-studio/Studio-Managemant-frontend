@@ -130,13 +130,13 @@ export default function Finance() {
 
       {/* SUMMARY CARDS: Income / Expenses / Net Profit */}
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
-        <StatCard icon="💰" tone="green" label="Income" value={`$${income.toLocaleString()}`} />
-        <StatCard icon="💸" tone="red" label="Expenses" value={`$${totalExpenses.toLocaleString()}`} valueClassName="text-red-500!" />
+        <StatCard icon="💰" tone="green" label="Income" value={`SLSH ${income.toLocaleString()}`} />
+        <StatCard icon="💸" tone="red" label="Expenses" value={`SLSH ${totalExpenses.toLocaleString()}`} valueClassName="text-red-500!" />
         <StatCard
           icon="📈"
           tone={netProfit >= 0 ? "green" : "red"}
           label="Net Profit"
-          value={`$${netProfit.toLocaleString()}`}
+          value={`SLSH ${netProfit.toLocaleString()}`}
           valueClassName={netProfit >= 0 ? "text-emerald-500!" : "text-red-500!"}
         />
       </div>
@@ -152,7 +152,7 @@ export default function Finance() {
               <div key={p.paymentMethod} className="flex items-center justify-between text-sm">
                 <span className="text-slate-500 dark:text-slate-400">{p.paymentMethod}</span>
                 <span className="font-semibold text-slate-900 dark:text-white">
-                  {p.count} orders — ${p.totalPaid.toLocaleString()}
+                  {p.count} orders — SLSH {p.totalPaid.toLocaleString()}
                 </span>
               </div>
             ))
@@ -182,13 +182,13 @@ export default function Finance() {
             </select>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Amount ($) *</label>
+            <label className="text-sm font-medium text-slate-600 dark:text-slate-300">Amount (SLSH) *</label>
             <input
               type="number"
               name="amount"
               value={formData.amount}
               onChange={handleFormChange}
-              placeholder="$0"
+              placeholder="0"
               required
               className={INPUT_CLASS}
             />
@@ -256,7 +256,7 @@ export default function Finance() {
                       <Pill tone="red">{expense.category}</Pill>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">{expense.description || "—"}</td>
-                    <td className="px-5 py-3.5 font-semibold text-red-500">${expense.amount.toLocaleString()}</td>
+                    <td className="px-5 py-3.5 font-semibold text-red-500">SLSH {expense.amount.toLocaleString()}</td>
                     <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">
                       {expense.createdBy?.username || "—"}
                     </td>

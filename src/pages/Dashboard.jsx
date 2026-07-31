@@ -36,12 +36,14 @@ export default function Dashboard() {
         customer.folderName?.toLowerCase().includes(term) ||
         customer.status?.toLowerCase().includes(term) ||
         customer.customerType?.toLowerCase().includes(term) ||
-        customer.vipTierLevel?.toLowerCase().includes(term) ||
         (customer.PhotoType &&
           customer.PhotoType.toLowerCase().includes(term)) ||
         customer.paymentMethod?.toLowerCase().includes(term) ||
         String(customer.normalPhotosCount || "").includes(term) ||
-        String(customer.vipPhotosCount || "").includes(term)
+        String(customer.vipPhotosCount || "").includes(term) ||
+        String(customer.vip1PhotosCount || "").includes(term) ||
+        String(customer.vip2PhotosCount || "").includes(term) ||
+        String(customer.vip3PhotosCount || "").includes(term)
       );
     }) || [];
     
@@ -103,7 +105,7 @@ export default function Dashboard() {
                   "Folder Name",
                   "Time",
                   "Photos ",
-                  "VIP Tier",
+                  "VIP Breakdown",
                   "EXP Info",
                   "Amount Paid",
                   "Payment Breakdown",
@@ -168,11 +170,19 @@ export default function Dashboard() {
                       </div>
                     </td>
 
-                    {/* ⭐ VIP Tier Level */}
+                    {/* ⭐ VIP Tier Breakdown (VIP1 / VIP2 / VIP3) */}
                     <td className="px-4 py-4">
-                      <span className="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">
-                        {customer.vipTierLevel || "VIP_1"}
-                      </span>
+                      <div className="flex flex-wrap items-center gap-1">
+                        <span className="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300">
+                          VIP1: {customer.vip1PhotosCount || 0}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700 dark:bg-violet-950/60 dark:text-violet-300">
+                          VIP2: {customer.vip2PhotosCount || 0}
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-fuchsia-50 px-2 py-0.5 text-[11px] font-semibold text-fuchsia-700 dark:bg-fuchsia-950/60 dark:text-fuchsia-300">
+                          VIP3: {customer.vip3PhotosCount || 0}
+                        </span>
+                      </div>
                     </td>
 
                     {/* ⏱️ EXP Info */}
@@ -180,27 +190,27 @@ export default function Dashboard() {
                       <div>EXP : {customer.expPhotosCount || 0}</div>
                       {customer.expExtraCharge > 0 && (
                         <div className="font-semibold text-indigo-600 dark:text-indigo-400">
-                          +${customer.expExtraCharge}
+                          +SLSH {customer.expExtraCharge}
                         </div>
                       )}
                     </td>
 
                     {/* Amount Paid */}
                     <td className="px-4 py-4 font-semibold text-slate-900 dark:text-white">
-                      ${customer.amountPaid || 0}
+                      SLSH {customer.amountPaid || 0}
                     </td>
 
                     {/* 💳 Payment Breakdown (Cash / Zaad / eDahab) */}
                     <td className="px-4 py-4 text-xs">
                       <div className="flex flex-col gap-0.5 text-slate-500 dark:text-slate-400">
                         {customer.cashAmount > 0 && (
-                          <span>💵 Cash: ${customer.cashAmount}</span>
+                          <span>💵 Cash: SLSH {customer.cashAmount}</span>
                         )}
                         {customer.zaadAmount > 0 && (
-                          <span>📱 Zaad: ${customer.zaadAmount}</span>
+                          <span>📱 Zaad: SLSH {customer.zaadAmount}</span>
                         )}
                         {customer.edahabAmount > 0 && (
-                          <span>💳 eDahab: ${customer.edahabAmount}</span>
+                          <span>💳 eDahab: SLSH {customer.edahabAmount}</span>
                         )}
                         {/* {!customer.cashAmount &&
                           !customer.zaadAmount &&
@@ -220,7 +230,7 @@ export default function Dashboard() {
                           : "text-emerald-500"
                       }`}
                     >
-                      ${customer.remainingAmount || 0}
+                      SLSH {customer.remainingAmount || 0}
                     </td>
 
                     {/* Status */}

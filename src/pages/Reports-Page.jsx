@@ -135,14 +135,14 @@ export default function Reports() {
               icon="💰"
               tone="green"
               label="Revenue (Paid)"
-              value={`$${report.revenue.totalPaid.toLocaleString()}`}
+              value={`SLSH ${report.revenue.totalPaid.toLocaleString()}`}
             />
                        {" "}
             <StatCard
               icon="💸"
               tone="amber"
               label="Outstanding (Debt)"
-              value={`$${report.revenue.totalOutstanding.toLocaleString()}`}
+              value={`SLSH ${report.revenue.totalOutstanding.toLocaleString()}`}
               valueClassName={
                 report.revenue.totalOutstanding > 0 ? "text-red-500!" : ""
               }
@@ -247,8 +247,7 @@ export default function Reports() {
                         </td>
                                                {" "}
                         <td className="px-5 py-3.5 font-medium text-slate-900 dark:text-white">
-                                                    $
-                          {e.revenue.toLocaleString()}                     
+SLSH {e.revenue.toLocaleString()}
                            {" "}
                         </td>
                                                {" "}
@@ -315,7 +314,7 @@ export default function Reports() {
                   💵 Wadarta Cash
                 </p>
                 <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                  ${report.revenue?.totalCash?.toLocaleString() || 0}
+                  SLSH {report.revenue?.totalCash?.toLocaleString() || 0}
                 </p>
               </div>
 
@@ -324,7 +323,7 @@ export default function Reports() {
                   📱 Wadarta Zaad
                 </p>
                 <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                  ${report.revenue?.totalZaad?.toLocaleString() || 0}
+                  SLSH {report.revenue?.totalZaad?.toLocaleString() || 0}
                 </p>
               </div>
 
@@ -333,7 +332,7 @@ export default function Reports() {
                   💳 Wadarta eDahab
                 </p>
                 <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                  ${report.revenue?.totaleDahab?.toLocaleString() || 0}
+                  SLSH {report.revenue?.totaleDahab?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
@@ -363,21 +362,21 @@ export default function Reports() {
                     <div className="flex items-center gap-4 text-xs font-medium">
                       {p.cashAmount > 0 && (
                         <span className="text-emerald-600 dark:text-emerald-400">
-                          💵 Cash: ${p.cashAmount.toLocaleString()}
+                          💵 Cash: SLSH {p.cashAmount.toLocaleString()}
                         </span>
                       )}
                       {p.zaadAmount > 0 && (
                         <span className="text-blue-600 dark:text-blue-400">
-                          📱 Zaad: ${p.zaadAmount.toLocaleString()}
+                          📱 Zaad: SLSH {p.zaadAmount.toLocaleString()}
                         </span>
                       )}
                       {p.edahabAmount > 0 && (
                         <span className="text-amber-600 dark:text-amber-400">
-                          💳 eDahab: ${p.edahabAmount.toLocaleString()}
+                          💳 eDahab: SLSH {p.edahabAmount.toLocaleString()}
                         </span>
                       )}
                       <span className="text-sm font-bold text-slate-900 dark:text-white">
-                        Total: ${p.totalPaid.toLocaleString()}
+                        Total: SLSH {p.totalPaid.toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -392,14 +391,14 @@ export default function Reports() {
               icon="💸"
               tone="red"
               label="Total Expenses"
-              value={`$${totalExpenses.toLocaleString()}`}
+              value={`SLSH ${totalExpenses.toLocaleString()}`}
               valueClassName="text-red-500!"
             />
             <StatCard
               icon="📈"
               tone={netProfit >= 0 ? "green" : "red"}
               label="Net Profit"
-              value={`$${netProfit.toLocaleString()}`}
+              value={`SLSH ${netProfit.toLocaleString()}`}
               valueClassName={netProfit >= 0 ? "text-emerald-500!" : "text-red-500!"}
             />
           </div>
@@ -421,7 +420,7 @@ export default function Reports() {
                   >
                     <span className="text-slate-500 dark:text-slate-400">{e.category}</span>
                     <span className="font-semibold text-red-500">
-                      ${e.total.toLocaleString()}
+                      SLSH {e.total.toLocaleString()}
                     </span>
                   </div>
                 ))

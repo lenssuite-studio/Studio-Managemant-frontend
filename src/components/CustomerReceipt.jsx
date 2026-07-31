@@ -14,6 +14,9 @@ export default function CustomerReceipt({ customer }) {
     numberOfPhotos,
     normalPhotosCount,
     vipPhotosCount,
+    vip1PhotosCount,
+    vip2PhotosCount,
+    vip3PhotosCount,
     amountPaid,
     remainingAmount,
     cashAmount,
@@ -68,32 +71,50 @@ export default function CustomerReceipt({ customer }) {
         <span>VIP</span>
         <span>{vipPhotosCount || 0}</span>
       </div>
+      {vip1PhotosCount > 0 && (
+        <div className="receipt-row">
+          <span>VIP 1</span>
+          <span>{vip1PhotosCount}</span>
+        </div>
+      )}
+      {vip2PhotosCount > 0 && (
+        <div className="receipt-row">
+          <span>VIP 2</span>
+          <span>{vip2PhotosCount}</span>
+        </div>
+      )}
+      {vip3PhotosCount > 0 && (
+        <div className="receipt-row">
+          <span>VIP 3</span>
+          <span>{vip3PhotosCount}</span>
+        </div>
+      )}
       <hr />
       {cashAmount > 0 && (
         <div className="receipt-row">
           <span>Cash</span>
-          <span>${cashAmount}</span>
+          <span>SLSH {cashAmount}</span>
         </div>
       )}
       {zaadAmount > 0 && (
         <div className="receipt-row">
           <span>Zaad</span>
-          <span>${zaadAmount}</span>
+          <span>SLSH {zaadAmount}</span>
         </div>
       )}
       {edahabAmount > 0 && (
         <div className="receipt-row">
           <span>eDahab</span>
-          <span>${edahabAmount}</span>
+          <span>SLSH {edahabAmount}</span>
         </div>
       )}
       <div className="receipt-row receipt-total">
         <span>Amount Paid</span>
-        <span>${amountPaid || 0}</span>
+        <span>SLSH {amountPaid || 0}</span>
       </div>
       <div className="receipt-row receipt-balance">
         <span>Remaining</span>
-        <span>${remainingAmount || 0}</span>
+        <span>SLSH {remainingAmount || 0}</span>
       </div>
       <hr />
       <p className="receipt-footer">Mahadsanid! / Thank you!</p>
